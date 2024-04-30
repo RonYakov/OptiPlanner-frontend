@@ -15,4 +15,8 @@ export class AuthService {
     return this.http.post( `http://localhost:3000/auth/sign-up`,{name, email, password}).pipe(map((res: any) => res))
   }
 
+  confirmRegister(email :String, confirmationCode: string){
+    return this.http.post( `http://localhost:3000/auth/confirm-register`,{email, confirmationCode}).pipe(map((res: any) => res))
+  }
+
 }

@@ -1,0 +1,97 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #C7DEC6; /* Base color */
+  font-family: 'Roboto', sans-serif;
+}
+
+.card {
+  width: 400px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
+  transition: 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0px 20px 40px rgba(0,0,0,0.3);
+}
+
+.card-header {
+  background-color: #A3C1AD; /* Darker shade of base color */
+  color: white;
+  font-size: 1.5em;
+  padding: 15px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #A3C1AD; /* Darker shade of base color */
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px; /* Adjust this value as needed */
+  border: none;
+  border-radius: 5px;
+  background-color: #E1F0E0; /* Lighter shade of base color */
+  transition: 0.3s;
+  box-sizing: border-box; /* Add this to include padding and border in element's total width and height */
+}
+
+.form-group input:focus {
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #A3C1AD; /* Darker shade of base color */
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #8AA897; /* Even darker shade on hover */
+}
+
+.btn:disabled {
+  background-color: #D1E5D4; /* Lighter shade when disabled */
+}
+
+.alert {
+  margin-top: 15px;
+  border-radius: 5px;
+  padding: 10px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  transition: 0.3s;
+}
+
+.alert:hover {
+  background-color: #f1b0b7;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
