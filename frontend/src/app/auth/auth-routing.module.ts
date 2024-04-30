@@ -2,14 +2,21 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {AuthPageComponent} from "./auth-page/auth-page.component";
 import {ConfirmRegisterPageComponent} from "./confirm-register-page/confirm-register-page.component";
+import { RegisterPageComponent } from './register-page/register-page.component';
+
+// const routes: Routes = [
+//   {path: '',component: ConfirmRegisterPageComponent,
+//     children:[
+//       {path: 'confirm-register',component: ConfirmRegisterPageComponent},
+//       {path: 'register',component: RegisterPageComponent},
+//     ]
+//   },
+// ];
 
 const routes: Routes = [
-  {path: '',component: AuthPageComponent,
-    children:[
-      {path: 'confirm-register',component: ConfirmRegisterPageComponent},
-    ]
-  },
-
+  {path: 'confirm-register', component: ConfirmRegisterPageComponent},
+  {path: 'register', component: RegisterPageComponent},
+  {path: '', redirectTo: '/auth/register', pathMatch: 'full'},
 ];
 
 @NgModule({
@@ -17,3 +24,6 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AuthRoutingModule { }
+
+
+
