@@ -36,7 +36,9 @@ export class RegisterPageComponent {
       if (res.status === 200) {
         this.router.navigate(['/confirm-register']);
       }
-      this.displayMessage = res.data;
+      else{
+        this.displayMessage = res.data;
+      }
     })
   }
 }

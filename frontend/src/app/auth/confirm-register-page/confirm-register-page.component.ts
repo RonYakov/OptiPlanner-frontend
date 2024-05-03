@@ -32,8 +32,7 @@ export class ConfirmRegisterPageComponent {
 
     this.authService.confirmRegister(confirmation.email, confirmation.confirmationCode).subscribe(res => {
       if (res.status === 200) {
-        //todo- rout to login/home page
-        //this.router.navigate(['']);
+        this.router.navigate(['/login']);
         console.log('Register successfully!')
       }else {
         this.displayMessage = res.data;
