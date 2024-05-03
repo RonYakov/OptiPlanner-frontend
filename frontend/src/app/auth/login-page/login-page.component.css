@@ -4,7 +4,7 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #C7DEC6; /* Base color */
+  background-color: #6DAFAB; /* Base color */
   font-family: 'Roboto', sans-serif;
 }
 
@@ -21,7 +21,7 @@ body {
 }
 
 .card-header {
-  background-color: #A3C1AD; /* Darker shade of base color */
+  background-color: #4B7F72; /* Darker shade of base color */
   color: white;
   font-size: 1.5em;
   padding: 15px;
@@ -39,7 +39,7 @@ body {
 
 .form-group label {
   font-weight: bold;
-  color: #A3C1AD; /* Darker shade of base color */
+  color: #4B7F72; /* Darker shade of base color */
 }
 
 .form-group input {
@@ -47,7 +47,7 @@ body {
   padding: 10px; /* Adjust this value as needed */
   border: none;
   border-radius: 5px;
-  background-color: #E1F0E0; /* Lighter shade of base color */
+  background-color: #D7E9E8; /* Lighter shade of base color */
   transition: 0.3s;
   box-sizing: border-box; /* Add this to include padding and border in element's total width and height */
 }
@@ -61,18 +61,18 @@ body {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #A3C1AD; /* Darker shade of base color */
+  background-color: #4B7F72; /* Darker shade of base color */
   color: white;
   font-weight: bold;
   transition: 0.3s;
 }
 
 .btn:hover {
-  background-color: #8AA897; /* Even darker shade on hover */
+  background-color: #365A54; /* Even darker shade on hover */
 }
 
 .btn:disabled {
-  background-color: #D1E5D4; /* Lighter shade when disabled */
+  background-color: #C6D5D4; /* Lighter shade when disabled */
 }
 
 .alert {
@@ -90,8 +90,24 @@ body {
 }
 
 .container {
+  margin-top: 7rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+}
+
+.first-here {
+  font-size: 18px; /* Increase the font size */
+  font-weight: bold; /* Make the text bold */
+  color: #4B7F72; /* Change the color to match the theme */
+  font-family: 'Roboto', sans-serif; /* Change the font family, if desired */
+  text-align: center; /* Center the text */
+}
+
+.register-link {
+  color: #2E4D3B; /* Different color */
+  text-decoration: underline; /* Add underline */
+}
+
+.register-link:hover {
+  color: #C6D5D4; /* Darker shade on hover */
 }
