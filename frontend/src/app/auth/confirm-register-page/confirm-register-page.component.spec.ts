@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ConfirmRegisterPageComponent } from './confirm-register-page.component';
 
 describe('ConfirmRegisterPageComponent', () => {
@@ -11,7 +10,7 @@ describe('ConfirmRegisterPageComponent', () => {
       declarations: [ConfirmRegisterPageComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(ConfirmRegisterPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
