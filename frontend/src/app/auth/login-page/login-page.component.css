@@ -27,6 +27,7 @@ body {
   padding: 15px;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  text-align: center;
 }
 
 .card-body {
@@ -96,11 +97,11 @@ body {
 }
 
 .first-here {
-  font-size: 18px; /* Increase the font size */
+  font-size: 1rem; /* Increase the font size */
   font-weight: bold; /* Make the text bold */
   color: #4B7F72; /* Change the color to match the theme */
   font-family: 'Roboto', sans-serif; /* Change the font family, if desired */
-  text-align: center; /* Center the text */
+  text-align: left; /* Center the text */
 }
 
 .register-link {
