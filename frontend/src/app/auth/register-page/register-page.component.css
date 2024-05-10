@@ -1,3 +1,5 @@
+@import "@fortawesome/fontawesome-free/css/all.css";
+
 body {
   display: flex;
   justify-content: center;
@@ -55,6 +57,22 @@ body {
 
 .form-group input:focus {
   box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+}
+.password {
+  position: relative;
+  display: block;
+}
+
+.password input {
+  padding-right: 30px; /* Space for the icon */
+}
+
+.password-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .btn {
