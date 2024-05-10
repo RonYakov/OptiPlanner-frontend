@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {AuthModule} from "./auth/auth.module";
+import {SharedModule} from "./shared/shared.module";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {AuthModule} from "./auth/auth.module";
         AppRoutingModule,
         HttpClientModule,
         ReactiveFormsModule,
-        AuthModule
+        AuthModule,
+        SharedModule
     ],
   providers: [
     provideClientHydration(),

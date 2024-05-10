@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { TopbarComponent } from './topbar/topbar.component';
+import { SidebarComponent } from './componnets/sidebar/sidebar.component';
+import { TopBarComponent } from './componnets/topbar/top-bar.component';
 
 
 
 @NgModule({
   declarations: [
     SidebarComponent,
-    TopbarComponent
+    TopBarComponent
   ],
   exports: [
-    TopbarComponent
+    TopBarComponent
   ],
   imports: [
     CommonModule
