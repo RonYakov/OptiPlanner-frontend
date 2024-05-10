@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule } from '@angular/forms';
 import { AuthRoutingModule } from './auth-routing.module';
 import { ConfirmRegisterPageComponent } from './confirm-register-page/confirm-register-page.component';
 import {AuthPageComponent} from "./auth-page/auth-page.component";
@@ -21,7 +21,8 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     AuthRoutingModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ]
 })
 export class AuthModule { }

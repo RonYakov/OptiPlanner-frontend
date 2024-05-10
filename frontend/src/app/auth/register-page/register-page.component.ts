@@ -14,6 +14,7 @@ export class RegisterPageComponent {
   loading = false;
   submitted = false;
   displayMessage: string = "";
+  showPassword = false;
 
   constructor(private router: Router,
               private authService: AuthService,
@@ -21,11 +22,24 @@ export class RegisterPageComponent {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, { validators: this.passwordMatchValidator });
+  }
+  passwordMatchValidator(formGroup: FormGroup) {
+    return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value ? null : { 'mismatch': true };
   }
 
   onSubmit() {
+    this.submitted = true;
+
+    if (this.registerForm.invalid) {
+      if (this.registerForm.errors?.['mismatch']) {
+        this.displayMessage = 'Unmatched password, please try again.';
+      }
+      return;
+    }
+
     const user: IUser = {
       name: this.registerForm.value.name,
       email: this.registerForm.value.email,
