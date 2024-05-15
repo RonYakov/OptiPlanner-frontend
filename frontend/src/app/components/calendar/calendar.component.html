@@ -1,0 +1,30 @@
+<div class="calendar-container">
+  <div class="calendar">
+    <div class="header">
+      <div class="title-section">
+        <h1>My Calendar <span class="date">{{ currentMonth }}</span></h1>
+      </div>
+      <div class="button-section">
+        <button (click)="prevMonth()">&#10508;</button> <!-- Heavy left arrow -->
+        <button (click)="nextMonth()">&#10509;</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let day of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']">
+          {{ day }}
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let week of days">
+        <td *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="showTasks(day)">
+          {{ day.date }}
+          <!-- You can add task display here -->
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
