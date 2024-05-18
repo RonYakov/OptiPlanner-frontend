@@ -1,0 +1,94 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 75%;
+  height: 90vh;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
+  font-family: 'Roboto', sans-serif;
+  margin: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.calendar-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+  background-color: white; /* Change background color to white */
+  color: black; /* Change text color to black */
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-section h1 {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  display: flex;
+  margin-left: 10px;
+  font-size: 1.5em;
+}
+
+.title-section .date {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  margin-left: 30px;
+}
+
+.button-section button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 2em; /* Adjust size as needed */
+  color: #6DAFAB; /* Adjust color as needed */
+}
+
+.button-section button:hover {
+  color: #A8DCD2; /* Adjust hover color as needed */
+}
+
+table {
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 10px;
+  background-color: white;
+}
+
+thead th {
+  text-align: center;
+  padding: 1em;
+  background-color: #6DAFAB; /* Base color */
+  color: white;
+}
+
+tbody td {
+  text-align: center;
+  padding: 10px;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+}
+
+tbody td:hover {
+  background-color: #e9e9e9;
+}
+
+#current-day {
+  background-color: #C1F3E9;
+}
+#current-day:hover {
+  background-color: #A8DCD2;
+}
