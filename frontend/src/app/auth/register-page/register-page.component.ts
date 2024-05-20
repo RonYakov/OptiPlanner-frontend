@@ -66,6 +66,9 @@ export class RegisterPageComponent implements OnInit {
           this.authService.signUpWithGoogle(googleToken).subscribe(res => {
             if (res.status === 200) {
 
+              console.log("sign up with google successful")
+              //todo- redirect to home page
+
             } else {
               this.displayMessage = res.data;
             }
