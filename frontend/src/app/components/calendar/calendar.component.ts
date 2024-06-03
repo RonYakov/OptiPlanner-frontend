@@ -37,7 +37,7 @@ export class CalendarComponent {
         date: currentDate.date(),
         month: currentDate.month(),
         year: currentDate.year(),
-        tasks: [] // You can add logic here to fetch tasks for this day
+        tasks: currentDate.date() === 1 ? [{ title: 'Demo Task', color: 'red' }] : [] // You can add logic here to fetch tasks for this day
       });
 
       // If it's the end of the week, push the week into calendarData and reset week
@@ -89,5 +89,13 @@ export class CalendarComponent {
   private updateCalendar() {
     this.currentMonth = this.currentDate.format('MMMM, YYYY');
     this.days = this.generateCalendar(this.currentDate.year(), this.currentDate.month());
+  }
+
+  showPopup = false;
+  selectedDay: any;
+
+  onDayClick(day: any) {
+    this.selectedDay = day;
+    this.showPopup = true;
   }
 }

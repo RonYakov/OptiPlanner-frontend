@@ -31,10 +31,9 @@ export class LoginPageComponent {
 
     this.authService.login(user.email, user.password).subscribe(res => {
       if (res.status === 200) {
-       // this.router.navigate([' ']);
+        this.router.navigate(['/my-calendar']);
       }
       else{
-        console.log('hi');
         this.displayMessage = res.data;
       }})
     }
