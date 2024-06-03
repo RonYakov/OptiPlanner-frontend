@@ -27,4 +27,7 @@ export class AuthService {
     return this.http.post( `http://localhost:3000/auth/login`,{email, password}).pipe(map((res: any) => res))
   }
 
+  signout(){
+    return this.http.post( `http://localhost:3000/auth/signout`,{}).pipe(map((res: any) => res))
+  }
 }
