@@ -1,0 +1,184 @@
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup-content {
+  background-color: #f9f9f9;
+  width: 90%;
+  height: 100%;
+  padding: 40px;
+  border-radius: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
+  font-family: 'Roboto', sans-serif;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-basis: 100%;
+  padding: 20px;
+  margin-right: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid #4B7F72;
+  box-sizing: border-box;
+  box-shadow: 0px 10px 20px rgba(75, 127, 114, 0.2);
+  border-radius: 15px;
+  font-family: 'Cursive';
+}
+
+.timeline:hover,
+.tasks:hover {
+  box-shadow: 0px 20px 40px rgba(0,0,0,0.3);
+}
+
+.timeline-container {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+}
+
+.timeline div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  line-height: 0;
+}
+
+.timeline .time {
+  flex: 1;
+  margin-right: 2px;
+}
+
+.timeline .line {
+  position: absolute;
+  z-index: 1;
+  left: 65px;
+  right: 0;
+  border-bottom: 0.5px solid #666;
+}
+
+.timeline .line.current-time {
+  border-color: red;
+}
+
+.timeline div.time {
+  position: relative;
+  font-family: 'Cursive';
+  border-bottom: 0.5px solid #666;
+}
+
+.timeline div.current-time {
+  border-color: red;
+}
+
+.time-style {
+  font-family: 'Comic Sans MS';
+}
+
+.time-slot {
+  display: flex;
+  align-items: center;
+}
+
+.time {
+  position: relative;
+  width: 50px;
+}
+
+.task {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 80px; /* Adjust as needed */
+  width: calc(80% - 60px); /* Adjust as needed */
+  background-color: #4285F4; /* Google Calendar blue */
+  color: white;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  z-index: 2; /* Ensure it's above other elements */
+  border-left: 4px solid #3367D6; /* A darker shade for the left border */
+}
+
+.task .task-title {
+  font-weight: bold;
+  margin-bottom: 0px;
+  display: block; /* Ensure the title is displayed as a block element */
+  line-height: 1.2;
+  width: 100%;
+}
+
+.task .task-description {
+  font-size: 12px;
+  color: #E8EAED;
+  margin-top: 10px; /* Add margin to separate from the title */
+  margin-bottom: 0px;
+  display: block; /* Ensure the description is displayed as a block element */
+  line-height: 1.2; /* Adjust line height for proper spacing */
+  width: 100%;
+  overflow: auto;
+}
+
+.task:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.tasks {
+  flex-grow: 1;
+  background-color: #D7E9E8;
+  border: 1px solid #4B7F72;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #D7E9E8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4B7F72;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #365A54;
+}
+
+.task-description::-webkit-scrollbar {
+  width: 5px;
+}
+
+.task-description::-webkit-scrollbar-track {
+  background: transparent; /* make scrollbar track transparent */
+}
+
+.task-description::-webkit-scrollbar-thumb {
+  background: #888; /* scrollbar color */
+  border-radius: 2px; /* roundness */
+}
+
+.task-description::-webkit-scrollbar-thumb:hover {
+  background: #555; /* scrollbar color on hover */
+}

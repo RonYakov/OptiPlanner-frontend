@@ -7,6 +7,7 @@
 
 .topbar-content {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
@@ -17,6 +18,24 @@
   width: auto;
   object-fit: contain;
   align-self: flex-start;
+}
+
+.logo-and-welcome {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-message {
+  margin-left: 30px; /* Adjust this value as needed */
+  font-size: 20px;
+  font-weight: bold;
+  color: #6DAFAB;
+}
+
+.right-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .topbar nav {
@@ -34,4 +53,23 @@
 
 .topbar nav a:hover {
   color: #343a40;
+}
+
+.topbar-content .signout-button {
+  background: none;
+  border: none;
+  color: #6DAFAB;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+.topbar-content .signout-button:hover {
+  color: #343a40;
+}
+.topbar-content .signout-button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }
