@@ -1,0 +1,153 @@
+body {
+  font-family: 'Roboto', sans-serif; /* Change the font family */
+  padding: 20px;
+  background-color: #D7E9E8;
+}
+
+h1 {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  color: #4B7F72;
+  font-size: 2.5em; /* Increase the font size */
+  margin-bottom: 30px; /* Increase the bottom margin */
+}
+
+.form-group {
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-bottom: 2px dashed #4B7F72; /* Change the border style and color */
+  padding-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 15px; /* Increase the bottom margin */
+  margin-left: 15px; /* Increase the left margin */
+  margin-right: 10px; /* Add a right margin to the label */
+  font-size: 1.2em; /* Increase the font size */
+}
+
+.form-group input,
+.form-group select {
+  margin-left: 10px; /* Add a left margin to the input */
+  width: 100%;
+  font-size: 1.1em; /* Increase the font size */
+}
+
+.priority-container {
+  display: flex;
+  gap: 5px;
+}
+
+.priority-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.flexibility-options {
+  display: none;
+}
+
+/* Add styling for the selected priority */
+.priority-box.selected {
+  border: 2px solid #000;
+}
+
+.radio-label,
+.checkbox-label {
+  margin-left: 5px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  display: none; /* Hide the original checkbox and radio */
+}
+
+input[type="radio"] + label,
+input[type="checkbox"] + label {
+  position: relative;
+  padding-left: 30px; /* Space for the new checkbox */
+  cursor: pointer;
+}
+
+input[type="radio"] + label:before,
+input[type="checkbox"] + label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #34495e;
+  border-radius: 50%;
+}
+
+input[type="radio"]:checked + label:before,
+input[type="checkbox"]:checked + label:before {
+  background-color: #4B7F72; /* Darker shade of base color */
+}
+
+form {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4B7F72; /* Darker shade of base color */
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #365A54; /* Even darker shade on hover */
+}
+
+.date-input,
+.time-input {
+  margin-right: 5px; /* Adjust as needed */
+}
+
+#add-alarm {
+  margin-top: 1px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4B7F72; /* Darker shade of base color */
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+#add-alarm:hover {
+  background-color: #365A54; /* Even darker shade on hover */
+}
+
+.inline-group {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Adjust as needed */
+}
+
+.inline-group label {
+  flex-grow: 1; /* This will make the label take up the remaining space */
+  white-space: nowrap;
+}
+
+.inline-group input {
+  width: 100%;
+}
