@@ -1,0 +1,43 @@
+<div class="popup" *ngIf="showPopup">
+  <div class="popup-content">
+    <button (click)="closePopup()">Close</button>
+    <div class="timeline-container">
+      <div class="timeline">
+        <ng-container *ngFor="let timeObj of times; let i = index">
+          <div *ngIf="!timeObj.isAfternoon">
+            <span class="time time-style" [class.current-time]="isCloseToCurrentTime(timeObj.time)">{{ timeObj.displayTime }}</span>
+            <span class="line" [class.current-time]="isCloseToCurrentTime(timeObj.time)"></span>
+            <ng-container *ngFor="let task of tasks">
+              <div *ngIf="isTaskInTimeRange(task, timeObj.time)" class="task"
+                   [style.top.px]="calculateTaskTop(task, timeObj.time)"
+                   [style.height.px]="calculateTaskHeight(task)"
+                   [style.width]="calculateTaskWidthAndPosition(task, tasks).width"
+                   [style.left]="calculateTaskWidthAndPosition(task, tasks).left">
+                <div class="task-title">{{task.title}}</div>
+                <div class="task-description">{{task.description}}</div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+      <div class="timeline">
+        <ng-container *ngFor="let timeObj of times; let i = index">
+          <div *ngIf="timeObj.isAfternoon">
+            <span class="time time-style" [class.current-time]="isCloseToCurrentTime(timeObj.time)">{{ timeObj.displayTime }}</span>
+            <span class="line" [class.current-time]="isCloseToCurrentTime(timeObj.time)"></span>
+            <ng-container *ngFor="let task of tasks">
+              <div *ngIf="isTaskInTimeRange(task, timeObj.time)" class="task"
+                   [style.top.px]="calculateTaskTop(task, timeObj.time)"
+                   [style.height.px]="calculateTaskHeight(task)"
+                   [style.width]="calculateTaskWidthAndPosition(task, tasks).width"
+                   [style.left]="calculateTaskWidthAndPosition(task, tasks).left">
+                <div class="task-title">{{task.title}}</div>
+                <div class="task-description">{{task.description}}</div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

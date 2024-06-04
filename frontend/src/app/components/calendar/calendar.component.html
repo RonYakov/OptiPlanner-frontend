@@ -19,12 +19,17 @@
       </thead>
       <tbody>
       <tr *ngFor="let week of days">
-        <td *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="showTasks(day)">
+        <td *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="onDayClick(day)">
           {{ day.date }}
-          <!-- You can add task display here -->
+          <div *ngFor="let task of day.tasks">
+            <span class="task-dot" [title]="task.title"></span>
+            <div class="task-square" [style.background]="task.color"></div>
+          </div>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<app-tasks-popup [showPopup]="showPopup" [selectedDay]="selectedDay" (close)="showPopup = false"></app-tasks-popup>

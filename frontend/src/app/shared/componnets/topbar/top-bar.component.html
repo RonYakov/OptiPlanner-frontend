@@ -1,10 +1,16 @@
 <div class="topbar">
   <div class="topbar-content">
-    <img src="../../../../assets/Optiplanner-logo.png" alt="Logo" />
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
-    </nav>
+    <div class="logo-and-welcome">
+      <img src="../../../../assets/Optiplanner-logo.png" alt="Logo" />
+      <div class="welcome-message">Welcome, {{userName}}!</div>
+    </div>
+    <div class="right-content">
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </nav>
+      <button class="signout-button" (click)="signOut()" [disabled]="isSignOutDisabled">Sign Out</button>
+    </div>
   </div>
 </div>
