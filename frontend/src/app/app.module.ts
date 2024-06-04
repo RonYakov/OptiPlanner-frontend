@@ -7,11 +7,17 @@ import {HttpClientModule} from "@angular/common/http";
 import {AuthModule} from "./auth/auth.module";
 import {SharedModule} from "./shared/shared.module";
 import { CalendarComponent } from './components/calendar/calendar.component';
+import { CreateAnEventComponent } from './components/create-an-event/create-an-event.component';
+import { TasksPopupComponent } from './components/tasks.popup/tasks.popup.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
+    CreateAnEventComponent,
+    TasksPopupComponent,
+
   ],
   imports: [
     BrowserModule,
