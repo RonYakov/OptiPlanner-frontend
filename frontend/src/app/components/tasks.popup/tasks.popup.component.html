@@ -1,6 +1,5 @@
 <div class="popup" *ngIf="showPopup">
   <div class="popup-content">
-    <button (click)="closePopup()">Close</button>
     <div class="timeline-container">
       <div class="timeline">
         <ng-container *ngFor="let timeObj of times; let i = index">
@@ -39,5 +38,6 @@
         </ng-container>
       </div>
     </div>
+    <button class="btn close-button" (click)="closePopup()">Close</button>
   </div>
 </div>

@@ -11,6 +11,7 @@
 }
 
 .popup-content {
+  position: relative;
   background-color: #f9f9f9;
   width: 90%;
   height: 100%;
@@ -78,14 +79,14 @@
   border-color: red;
 }
 
+.timeline div.current-time {
+  border-color: red;
+}
+
 .timeline div.time {
   position: relative;
   font-family: 'Cursive';
   border-bottom: 0.5px solid #666;
-}
-
-.timeline div.current-time {
-  border-color: red;
 }
 
 .time-style {
@@ -181,4 +182,26 @@
 
 .task-description::-webkit-scrollbar-thumb:hover {
   background: #555; /* scrollbar color on hover */
+}
+
+.btn {
+  width: 30%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4B7F72; /* Darker shade of base color */
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #365A54; /* Even darker shade on hover */
+}
+
+.close-button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }

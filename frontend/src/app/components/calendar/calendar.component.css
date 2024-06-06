@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
   width: 75%;
-  height: 90vh;
   border: none;
   border-radius: 20px;
   box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
@@ -12,6 +11,7 @@
   padding: 20px;
   box-sizing: border-box;
 }
+
 .calendar-container {
   display: flex;
   justify-content: flex-end;
@@ -76,11 +76,15 @@ thead th {
 }
 
 tbody td {
+  position: relative;
   text-align: center;
   padding: 10px;
   background-color: #f2f2f2;
   border: 1px solid #ddd;
+  aspect-ratio: 1; /* Square aspect ratio */
+  height: 4vw; /* Set the height relative to viewport width */
 }
+
 
 tbody td:hover {
   background-color: #e9e9e9;
@@ -91,4 +95,30 @@ tbody td:hover {
 }
 #current-day:hover {
   background-color: #A8DCD2;
+}
+
+.task-count-container {
+  position: absolute;
+  bottom: 5px; /* Adjust as needed */
+  left: 5px; /* Adjust as needed */
+  display: flex;
+}
+
+.task-count {
+  width: 10px; /* Adjust as needed */
+  height: 10px; /* Adjust as needed */
+  border-radius: 50%;
+  margin-right: 5px; /* Adjust as needed */
+}
+
+.day-number {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.hebrew-date {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }

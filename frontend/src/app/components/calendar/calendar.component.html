@@ -19,11 +19,15 @@
       </thead>
       <tbody>
       <tr *ngFor="let week of days">
-        <td *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="onDayClick(day)">
+        <td class="day-number" *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="onDayClick(day)">
           {{ day.date }}
+          <div class="hebrew-date">{{ day.hebrewDate }}</div>
           <div *ngFor="let task of day.tasks">
             <span class="task-dot" [title]="task.title"></span>
             <div class="task-square" [style.background]="task.color"></div>
+          </div>
+          <div class="task-count-container">
+            <div class="task-count" *ngFor="let task of day.tasks" [style.background]="task.color" [title]="task.title"></div>
           </div>
         </td>
       </tr>
