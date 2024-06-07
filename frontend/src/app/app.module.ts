@@ -9,6 +9,8 @@ import {SharedModule} from "./shared/shared.module";
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { CreateEventComponent } from './components/create-event/create-event.component';
 import { TasksPopupComponent } from './components/tasks.popup/tasks.popup.component';
+import { WINDOW_PROVIDERS } from './shared/componnets/sidebar/window.providers';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -25,10 +27,12 @@ import { TasksPopupComponent } from './components/tasks.popup/tasks.popup.compon
     HttpClientModule,
     ReactiveFormsModule,
     AuthModule,
-    SharedModule
+    SharedModule,
+    FontAwesomeModule
   ],
   providers: [
     provideClientHydration(),
+    WINDOW_PROVIDERS
   ],
   bootstrap: [AppComponent]
 })
