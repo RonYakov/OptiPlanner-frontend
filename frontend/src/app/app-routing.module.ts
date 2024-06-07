@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {AuthPageComponent} from "./auth/auth-page/auth-page.component";
 import { CalendarComponent } from './components/calendar/calendar.component';
-import {CreateAnEventComponent} from "./components/create-an-event/create-an-event.component";
+import {CreateEventComponent} from "./components/create-event/create-event.component";
 
 const routes: Routes = [
   {
@@ -13,7 +13,7 @@ const routes: Routes = [
     path: 'my-calendar', component: CalendarComponent
   },
   {
-    path: 'create-an-event', component: CreateAnEventComponent
+    path: 'create-event', component: CreateEventComponent
   },
 ];
 

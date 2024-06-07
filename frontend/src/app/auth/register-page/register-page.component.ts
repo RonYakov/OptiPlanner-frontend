@@ -1,3 +1,4 @@
+
 declare var google: any;
 
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
@@ -6,6 +7,9 @@ import { Router } from "@angular/router";
 import { IUser } from "../../shared/interface/user.interface";
 import { AuthService } from "../../shared/services/auth.service";
 import { isPlatformBrowser } from '@angular/common';
+
+
+
 
 @Component({
   selector: 'app-register-page',
@@ -61,8 +65,10 @@ export class RegisterPageComponent implements OnInit {
 
           this.authService.signUpWithGoogle(googleToken).subscribe(res => {
             if (res.status === 200) {
+
               console.log("sign up with google successful")
               //todo- redirect to home page
+
             } else {
               this.displayMessage = res.data;
             }
@@ -114,4 +120,5 @@ export class RegisterPageComponent implements OnInit {
       }
     })
   }
+
 }
