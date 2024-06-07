@@ -22,6 +22,7 @@
     "@angular/router": "^17.0.0",
     "@angular/ssr": "^17.0.7",
     "@fortawesome/fontawesome-free": "^6.5.2",
+    "@jefiozie/ngx-aws-deploy": "^4.1.0",
     "angularx-social-login": "^4.1.0",
     "aws-amplify": "^6.3.1",
     "aws-sdk": "^2.1619.0",

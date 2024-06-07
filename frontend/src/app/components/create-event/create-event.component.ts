@@ -1,11 +1,11 @@
 import { Component, AfterViewInit, Renderer2, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'app-create-an-event',
-  templateUrl: './create-an-event.component.html',
-  styleUrls: ['./create-an-event.component.css']
+  selector: 'app-create-event',
+  templateUrl: './create-event.component.html',
+  styleUrls: ['./create-event.component.css']
 })
-export class CreateAnEventComponent implements AfterViewInit {
+export class CreateEventComponent implements AfterViewInit {
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) { }
 
