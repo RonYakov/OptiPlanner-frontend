@@ -1,29 +1,26 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import {ITask} from "../../shared/interface/task.interface";
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange } from '@angular/core';
+import {Task} from "../../shared/classes/task";
 
 @Component({
   selector: 'app-tasks-popup',
   templateUrl: './tasks.popup.component.html',
   styleUrls: ['./tasks.popup.component.css']
 })
-export class TasksPopupComponent implements OnInit {
+export class TasksPopupComponent implements OnInit, OnChanges {
   @Input() showPopup!: boolean;
   @Input() selectedDay: any;
+  @Input() tasks: Task[] = [];
   @Output() close = new EventEmitter<void>();
 
   times: { time: string, displayTime: string, isAfternoon: boolean }[] = [];
   closestTime: string = "";
 
-  tasks: ITask[] = [
-    { title: "AWS project work", description: "Front work need to be done!", startTime: '12:50', endTime: '13:30' },
-    { title: "Football with friends", description: "I need to get my Liverpool shirt ready", startTime: '12:20', endTime: '13:20' },
-    { title: "Test", description: "test", startTime: '12:00', endTime: '13:40' },
-    { title: "Lunch Time", description: "Today i have pasta with meatballs", startTime: '14:10', endTime: '15:40' }
-  ]; // Dummy tasks
-
   ngOnInit() {
     this.generateTimes();
     this.calculateClosestTime();
+  }
+
+  ngOnChanges(changes: Record<string, SimpleChange>) {
   }
 
   generateTimes() {
@@ -67,9 +64,9 @@ export class TasksPopupComponent implements OnInit {
     return time === this.closestTime;
   }
 
-  isTaskInTimeRange(task: ITask, time: string): boolean {
-    const [taskStartHours, taskStartMinutes] = task.startTime.split(':').map(Number);
-    const [taskEndHours, taskEndMinutes] = task.endTime.split(':').map(Number);
+  isTaskInTimeRange(task: Task, time: string): boolean {
+    const [taskStartHours, taskStartMinutes] = task.getStartTime().split(':').map(Number);
+    const [taskEndHours, taskEndMinutes] = task.getEndTime().split(':').map(Number);
     const [currentHours, currentMinutes] = time.split(':').map(Number);
 
     const taskStartTime = taskStartHours * 60 + taskStartMinutes;
@@ -79,38 +76,29 @@ export class TasksPopupComponent implements OnInit {
     return currentTime >= taskStartTime && currentTime <= taskEndTime;
   }
 
-  calculateTaskTop(task: ITask, time: string): number {
-    let [taskStartHours, taskStartMinutes] = task.startTime.split(':').map(Number);
-
-    // If the task starts in the afternoon, subtract 12 hours
-    if (taskStartHours >= 12) {
-      taskStartHours -= 12;
-    }
+  calculateTaskTop(task: Task, time: string): number {
+    let [taskStartHours, taskStartMinutes] = task.getStartTime().split(':').map(Number);
 
     const taskStartTime = taskStartHours * 60 + taskStartMinutes;
-    const top = taskStartTime * 2 + 20; // Add 20 to offset the tasks from the top of the timeline
-
-    console.log(`Task start time: ${task.startTime}, Calculated top: ${top}`);
+    const top = taskStartTime * 2 + 20;
 
     return top;
   }
 
-  calculateTaskHeight(task: ITask): number {
-    const [taskStartHours, taskStartMinutes] = task.startTime.split(':').map(Number);
-    const [taskEndHours, taskEndMinutes] = task.endTime.split(':').map(Number);
+  calculateTaskHeight(task: Task): number {
+    const [taskStartHours, taskStartMinutes] = task.getStartTime().split(':').map(Number);
+    const [taskEndHours, taskEndMinutes] = task.getEndTime().split(':').map(Number);
 
     const taskStartTime = taskStartHours * 60 + taskStartMinutes;
     const taskEndTime = taskEndHours * 60 + taskEndMinutes;
     const height = (taskEndTime - taskStartTime) * 2; // Multiply by 2 to convert minutes to pixels
 
-    console.log(`Task start time: ${task.startTime}, Task end time: ${task.endTime}, Calculated height: ${height}`);
-
     return height - 11;
   }
 
-  identifyOverlappingTasks(tasks: ITask[]): ITask[][] {
+  identifyOverlappingTasks(tasks: Task[]): Task[][] {
     // Sort tasks by start time
-    const sortedTasks = tasks.sort((a, b) => this.timeToMinutes(a.startTime) - this.timeToMinutes(b.startTime));
+    const sortedTasks = tasks.sort((a, b) => this.timeToMinutes(a.getStartTime()) - this.timeToMinutes(b.getStartTime()));
 
     const overlappingTasks = [];
     let currentOverlapGroup = [sortedTasks[0]];
@@ -120,46 +108,38 @@ export class TasksPopupComponent implements OnInit {
       const lastTaskInGroup = currentOverlapGroup[currentOverlapGroup.length - 1];
 
       // If the current task starts before the last task in the group ends, they are overlapping
-      if (this.timeToMinutes(currentTask.startTime) < this.timeToMinutes(lastTaskInGroup.endTime)) {
+      if (this.timeToMinutes(currentTask.getStartTime()) < this.timeToMinutes(lastTaskInGroup.getEndTime())) {
         currentOverlapGroup.push(currentTask);
       } else {
-        // If the current task does not overlap with the last task in the group, start a new group
         overlappingTasks.push(currentOverlapGroup);
         currentOverlapGroup = [currentTask];
       }
     }
 
-    // Add the last group of overlapping tasks
     overlappingTasks.push(currentOverlapGroup);
 
     return overlappingTasks;
   }
 
-  calculateTaskWidthAndPosition(task: ITask, tasks: ITask[]): { width: string, left: string } {
+  calculateTaskWidthAndPosition(task: Task, tasks: Task[]): { width: string, left: string } {
     const overlappingGroup = this.identifyOverlappingTasks(tasks).find(group => group.includes(task));
 
     if (!overlappingGroup) {
-      // If there are no overlapping tasks, return default width and left values
       return { width: 'calc(70% - 80px)', left: '80px' }; // Adjust the left value as needed
     }
 
-    // Number of overlapping tasks
     const numTasks = overlappingGroup.length;
-
-    // Calculate the remaining width after the initial 80px
     const remainingWidth = `calc(95% - 80px)`;
-
-    // Calculate the width for each task based on the number of overlapping tasks
     const width = `calc(${remainingWidth} / ${numTasks + numTasks*0.5})`;
-
-    // Find the position of the current task in the overlapping group
     const taskIndex = overlappingGroup.indexOf(task);
-
-    // Calculate the left position for each task
     const left = `calc(80px + (${taskIndex} * (${remainingWidth} / ${numTasks})))`;
 
-    // Return the calculated width and left values
     return { width, left };
   }
 
+  highlightTasks(tasks: Task[]) {
+    this.tasks = tasks;
+    console.log(this.tasks)
+    this.showPopup = true;
+  }
 }

@@ -10,7 +10,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent implements OnInit, OnDestroy {
-  isSignOutDisabled = true;
   userName: string = 'User';
   private subscriptions: Subscription[] = [];
 
@@ -18,23 +17,12 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.topbarService.userName$.subscribe(name => this.userName = name),
-      this.topbarService.isSignOutDisabled$.subscribe(status => this.isSignOutDisabled = status)
+      this.topbarService.userName$.subscribe(name => this.userName = name)
     );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-  signOut(): void {
-    this.authService.signout().subscribe(res => {
-      if (res.status === 200) {
-        this.topbarService.setUserName('User');
-        this.topbarService.toggleSignOutButton();
-        this.router.navigate(['/auth/login']);
-      }
-    });
   }
 }
 

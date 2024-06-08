@@ -111,6 +111,7 @@ tbody td:hover {
   margin-right: 5px; /* Adjust as needed */
 }
 
+
 .day-number {
   font-weight: bold;
   font-size: 1em;
@@ -121,4 +122,16 @@ tbody td:hover {
   color: #888;
   margin-top: 5px;
   margin-bottom: 10px;
+}
+
+.day-number.filler-day {
+  background-color: #f3f3f3;
+  cursor: default;
+  border-color: white;
+  border-radius: 10px;
+}
+
+.day-number.filler-day:hover {
+  transform: none;
+  background-color: #f3f3f3;
 }

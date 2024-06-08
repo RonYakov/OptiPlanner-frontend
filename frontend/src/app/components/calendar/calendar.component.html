@@ -19,7 +19,11 @@
       </thead>
       <tbody>
       <tr *ngFor="let week of days">
-        <td class="day-number" *ngFor="let day of week" [attr.id]="isCurrentDay(day) ? 'current-day' : null" (click)="onDayClick(day)">
+        <td class="day-number"
+            [class.filler-day]="day.isFiller"
+            *ngFor="let day of week"
+            [attr.id]="isCurrentDay(day) ? 'current-day' : null"
+            (click)="onDayClick(day)">
           {{ day.date }}
           <div class="hebrew-date">{{ day.hebrewDate }}</div>
           <div *ngFor="let task of day.tasks">
@@ -27,7 +31,7 @@
             <div class="task-square" [style.background]="task.color"></div>
           </div>
           <div class="task-count-container">
-            <div class="task-count" *ngFor="let task of day.tasks" [style.background]="task.color" [title]="task.title"></div>
+            <div class="task-count" *ngFor="let task of day.tasks" [style.background]="googleCalendarColors.lightBlue" [title]="task.name"></div>
           </div>
         </td>
       </tr>
@@ -36,4 +40,9 @@
   </div>
 </div>
 
-<app-tasks-popup [showPopup]="showPopup" [selectedDay]="selectedDay" (close)="showPopup = false"></app-tasks-popup>
+<app-tasks-popup
+  [showPopup]="showPopup"
+  [selectedDay]="selectedDay"
+  [tasks]="selectedDayTasks"
+  (close)="showPopup = false">
+</app-tasks-popup>
