@@ -1,16 +1,15 @@
 .sidebar {
   position: fixed;
-  top: 160px;
+  top: 155px;
   left: 0;
   width: 15%;
-  height: calc(100% - 160px);
+  height: calc(100% - 155px);
   overflow: auto;
   background: linear-gradient(to bottom, #f4f4f4, #e0e0e0);
   text-align: left;
   padding: 20px;
-  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 10px 15px 0px rgba(0,0,0,0.2); /* Adjust this line */
 }
-
 .button-container {
   display: flex;
   flex-direction: column;
@@ -53,4 +52,12 @@
 
 .button-container .calendar-button:hover fa-icon {
   color: #538482; /* Make the calendar icon bolder when hovered */
+}
+
+.button-container .signout-button:hover {
+  color: #343a40;
+}
+.button-container .signout-button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }

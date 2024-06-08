@@ -6,5 +6,6 @@
     <button type="button"><fa-icon [icon]="faChartBar"></fa-icon> Statistics</button>
     <button type="button"><fa-icon [icon]="faCog"></fa-icon> Settings</button>
     <button type="button"><fa-icon [icon]="faQuestionCircle"></fa-icon> Help</button>
+    <button class="signout-button" (click)="signOut()" [disabled]="isSignOutDisabled"><fa-icon [icon]="faSignOutAlt"></fa-icon> Logout</button>
   </div>
 </div>

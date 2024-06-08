@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { WINDOW } from './window.providers';
-import { faCalendar, faPlus, faChartBar, faCog, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faPlus, faChartBar, faCog, faQuestionCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
+import {Subscription} from "rxjs";
+import { TopbarService } from '../../services/topbar.service';
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -9,14 +12,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit, OnDestroy {
+  isSignOutDisabled = true;
+  private subscriptions: Subscription[] = [];
   isOpen = false;
   faCalendar = faCalendar;
   faPlus = faPlus;
   faChartBar = faChartBar;
   faCog = faCog;
   faQuestionCircle = faQuestionCircle;
+  faSignOutAlt = faSignOutAlt;
 
-  constructor(@Inject(WINDOW) private window: Window, private router: Router) {}
+  constructor(@Inject(WINDOW) private window: Window, private router: Router, private topbarService: TopbarService, private authService: AuthService) {}
 
   toggleSidebar() {
     this.isOpen = !this.isOpen;
@@ -24,16 +30,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.window.addEventListener('scroll', this.scroll, true);
+    this.subscriptions.push(
+      this.topbarService.isSignOutDisabled$.subscribe(status => this.isSignOutDisabled = status)
+    );
   }
 
   ngOnDestroy(): void {
     this.window.removeEventListener('scroll', this.scroll, true);
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   scroll = (): void => {
     const sidebar = this.window.document.getElementById('sidebar');
     if (sidebar) {
-      const initialTop = 160;
+      const initialTop = 155;
       const scrollPosition = this.window.pageYOffset;
       const newTop = initialTop - scrollPosition;
 
@@ -51,6 +61,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   navigateToNewEvent() {
-    this.router.navigate(['/create-an-event']);
+    this.router.navigate(['/create-event']);
+  }
+
+  signOut(): void {
+    this.authService.signout().subscribe(res => {
+      if (res.status === 200) {
+        this.topbarService.setUserName('User');
+        this.topbarService.toggleSignOutButton();
+        this.router.navigate(['/auth/login']);
+      }
+    });
   }
 }
