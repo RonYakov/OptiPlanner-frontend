@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
-import { TopbarService } from '../../services/topbar.service';
+import { SidebarService } from '../../services/sidebar.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,7 +13,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
   userName: string = 'User';
   private subscriptions: Subscription[] = [];
 
-  constructor(private authService: AuthService, private topbarService: TopbarService, private router: Router) {}
+  constructor(private authService: AuthService, private topbarService: SidebarService, private router: Router) {}
 
   ngOnInit(): void {
     this.subscriptions.push(

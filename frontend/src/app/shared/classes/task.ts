@@ -1,6 +1,6 @@
 export class Task {
   constructor(
-    public user_id: number,
+    public user_id: string,
     public name: string,
     public start_date: Date,
     public end_date: Date,

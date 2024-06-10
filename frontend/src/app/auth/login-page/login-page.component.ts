@@ -3,7 +3,7 @@ import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from "@angular/router";
 import {AuthService} from "../../shared/services/auth.service";
 import {ILoginUser} from "../../shared/interface/login-user.interface";
-import { TopbarService } from '../../shared/services/topbar.service';
+import { SidebarService } from '../../shared/services/sidebar.service';
 
 @Component({
   selector: 'app-login-page',
@@ -17,7 +17,7 @@ export class LoginPageComponent {
 
   constructor(private router: Router,
               private authService: AuthService,
-              private topbarService: TopbarService,
+              private sidebarService: SidebarService,
               private formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.required],
@@ -33,8 +33,10 @@ export class LoginPageComponent {
 
     this.authService.login(user.email, user.password).subscribe(res => {
       if (res.status === 200) {
-        this.topbarService.setUserName(res.data);
-        this.topbarService.toggleSignOutButton();
+        console.log(res);
+        this.sidebarService.setUserName(res.data.name);
+        this.sidebarService.setUserId(res.data.id);
+        this.sidebarService.toggleSignOutButton();
         this.router.navigate(['/my-calendar']);
       }
       else{
