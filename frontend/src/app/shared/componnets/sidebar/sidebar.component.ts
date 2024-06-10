@@ -3,7 +3,7 @@ import { WINDOW } from './window.providers';
 import { faCalendar, faPlus, faChartBar, faCog, faQuestionCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import {Subscription} from "rxjs";
-import { TopbarService } from '../../services/topbar.service';
+import { SidebarService } from '../../services/sidebar.service';
 import {AuthService} from "../../services/auth.service";
 
 @Component({
@@ -22,7 +22,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   faQuestionCircle = faQuestionCircle;
   faSignOutAlt = faSignOutAlt;
 
-  constructor(@Inject(WINDOW) private window: Window, private router: Router, private topbarService: TopbarService, private authService: AuthService) {}
+  constructor(@Inject(WINDOW) private window: Window, private router: Router, private topbarService: SidebarService, private authService: AuthService) {}
 
   toggleSidebar() {
     this.isOpen = !this.isOpen;

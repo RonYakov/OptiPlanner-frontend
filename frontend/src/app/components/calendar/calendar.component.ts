@@ -4,6 +4,7 @@ import moment from 'moment';
 import HebrewDate from 'hebrew-date';
 import { Task } from '../../shared/classes/task';
 import { TasksPopupComponent } from '../tasks.popup/tasks.popup.component';
+import { SidebarService} from "../../shared/services/sidebar.service";
 
 
 @Component({
@@ -52,7 +53,7 @@ export class CalendarComponent implements OnInit {
     //   'Running in the park' // description
     // ),
     new Task(
-      1,
+      "d438b438-a041-7013-6eb6-3a4be96d36d3",
       'Team Meeting',
       new Date(2024, 5, 8), // start_date
       new Date(2024, 5, 8), // end_date
@@ -100,7 +101,8 @@ export class CalendarComponent implements OnInit {
 
   hebrewMonths: { [key: string]: string } = {};
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef,
+              private sidebarService: SidebarService ) {}
 
   ngOnInit() {
     this.hebrewMonths = {
@@ -225,7 +227,9 @@ export class CalendarComponent implements OnInit {
     return this.selectedDayTasks.filter(task => {
       let taskStartDate = new Date(task.start_date);
       let taskEndDate = new Date(task.end_date);
-
+      if(task.user_id !== this.sidebarService.getUserId()){
+        return false;
+      }
       if (taskStartDate <= date && date <= taskEndDate) {
         return true;
       }
