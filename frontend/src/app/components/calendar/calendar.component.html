@@ -1,4 +1,12 @@
-<div class="calendar-container">
+<div *ngIf="isLoading" class="content-container">
+  <div class="loading-message">
+    <div class="spinner"></div>
+    <span class="loading-text">Loading</span>
+  </div>
+</div>
+
+
+<div class="calendar-container" *ngIf="!isLoading">
   <div class="calendar">
     <div class="header">
       <div class="title-section">

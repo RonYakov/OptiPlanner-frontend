@@ -1,10 +1,13 @@
-import { Component, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ViewChild, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Output, EventEmitter } from '@angular/core';
 import moment from 'moment';
 import HebrewDate from 'hebrew-date';
 import { Task } from '../../shared/classes/task';
 import { TasksPopupComponent } from '../tasks.popup/tasks.popup.component';
 import { SidebarService} from "../../shared/services/sidebar.service";
+import {CalendarService} from "../../shared/services/calendar.service";
+import { AuthService } from '../../shared/services/auth.service';
 
 
 @Component({
@@ -36,75 +39,82 @@ export class CalendarComponent implements OnInit {
   currentDate: moment.Moment = moment();
   currentMonth: string = this.currentDate.format('MMMM, YYYY');
   days: any[] = [];
-  selectedDayTasks: Task[] = [
-    // new Task(
-    //   1, // user_id
-    //   'Morning Run', // name
-    //   new Date(2024, 5, 11), // start_date
-    //   new Date(2024, 5, 11), // end_date
-    //   false, // whole_day
-    //   new Date(2022, 1, 1, 6, 0), // start_time
-    //   new Date(2022, 1, 1, 7, 0), // end_time
-    //   true, // repeat
-    //   1, // repeat_type
-    //   1, // repeat_interval
-    //   'Park', // location
-    //   1, // category
-    //   'Running in the park' // description
-    // ),
-    new Task(
-      "d438b438-a041-7013-6eb6-3a4be96d36d3",
-      'Team Meeting',
-      new Date(2024, 5, 8), // start_date
-      new Date(2024, 5, 8), // end_date
-      false,
-      new Date(2024, 5, 8, 10, 0), // start_time
-      new Date(2024, 5, 10, 11, 0), // end_time
-      true,
-      4,
-      5,
-      'Office',
-      2,
-      'Discussing the progress of the project'
-    ),
-    // new Task(
-    //   1,
-    //   'Lunch with John',
-    //   new Date(2024, 5, 15), // start_date
-    //   new Date(2024, 5, 15), // end_date
-    //   false,
-    //   new Date(2022, 1, 1, 13, 0),
-    //   new Date(2022, 1, 1, 14, 0),
-    //   false,
-    //   undefined,
-    //   undefined,
-    //   'Restaurant',
-    //   3,
-    //   'Catching up with John'
-    // ),
-    // new Task(
-    //   1,
-    //   'Reading',
-    //   new Date(2024, 5, 30), // start_date
-    //   new Date(2024, 5, 30), // end_date
-    //   false,
-    //   new Date(2022, 1, 1, 20, 0),
-    //   new Date(2022, 1, 1, 21, 0),
-    //   true,
-    //   1,
-    //   1,
-    //   'Home',
-    //   4,
-    //   'Reading a new book'
-    // )
-  ];
+  selectedDayTasks: Task[] = [];
+  isLoading = true;
+
+  // selectedDayTasksTesting: Task[] = [
+  //   new Task(
+  //     1, // user_id
+  //     'Morning Run', // name
+  //     new Date(2024, 5, 11), // start_date
+  //     new Date(2024, 5, 11), // end_date
+  //     false, // whole_day
+  //     new Date(2022, 1, 1, 6, 0), // start_time
+  //     new Date(2022, 1, 1, 7, 0), // end_time
+  //     true, // repeat
+  //     1, // repeat_type
+  //     1, // repeat_interval
+  //     'Park', // location
+  //     1, // category
+  //     'Running in the park' // description
+  //   ),
+  //   new Task(
+  //     "d438b438-a041-7013-6eb6-3a4be96d36d3",
+  //     'Team Meeting',
+  //     new Date(2024, 5, 8), // start_date
+  //     new Date(2024, 5, 8), // end_date
+  //     false,
+  //     new Date(2024, 5, 8, 10, 0), // start_time
+  //     new Date(2024, 5, 10, 11, 0), // end_time
+  //     true,
+  //     4,
+  //     5,
+  //     'Office',
+  //     2,
+  //     'Discussing the progress of the project'
+  //   ),
+  //   // new Task(
+  //   //   1,
+  //   //   'Lunch with John',
+  //   //   new Date(2024, 5, 15), // start_date
+  //   //   new Date(2024, 5, 15), // end_date
+  //   //   false,
+  //   //   new Date(2022, 1, 1, 13, 0),
+  //   //   new Date(2022, 1, 1, 14, 0),
+  //   //   false,
+  //   //   undefined,
+  //   //   undefined,
+  //   //   'Restaurant',
+  //   //   3,
+  //   //   'Catching up with John'
+  //   // ),
+  //   // new Task(
+  //   //   1,
+  //   //   'Reading',
+  //   //   new Date(2024, 5, 30), // start_date
+  //   //   new Date(2024, 5, 30), // end_date
+  //   //   false,
+  //   //   new Date(2022, 1, 1, 20, 0),
+  //   //   new Date(2022, 1, 1, 21, 0),
+  //   //   true,
+  //   //   1,
+  //   //   1,
+  //   //   'Home',
+  //   //   4,
+  //   //   'Reading a new book'
+  //   // )
+  // ]; //todo - juat for testing
 
   hebrewMonths: { [key: string]: string } = {};
 
   constructor(private cdr: ChangeDetectorRef,
-              private sidebarService: SidebarService ) {}
+              private authService: AuthService,
+              private sidebarService: SidebarService,
+              private calendarService: CalendarService,
+              @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.hebrewMonths = {
       'Nisan': 'ניסן',
       'Iyyar': 'אייר',
@@ -121,7 +131,28 @@ export class CalendarComponent implements OnInit {
       'AdarI': 'אדר',
       'AdarII': 'אדר ב'
     };
-    this.updateCalendar();
+
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = localStorage.getItem('userId');
+      console.log('Initial userId from localStorage:', userId);
+
+      if (userId) {
+        this.calendarService.getUserEvents(userId).subscribe(tasks => {
+          this.selectedDayTasks = tasks;
+          console.log("Fetched tasks: ", this.selectedDayTasks);
+          this.updateCalendar();
+          this.isLoading = false;
+        }, error => {
+          console.error('Error fetching user events:', error);
+          this.isLoading = false;
+        });
+      } else {
+        console.error('User ID is null or undefined after initial check');
+        this.isLoading = false;
+      }
+    } else {
+      console.warn('This code is running on the server side (Angular Universal), localStorage is not available.');
+    }
   }
 
   toHebrewNumerals(number: number): string {
@@ -227,9 +258,6 @@ export class CalendarComponent implements OnInit {
     return this.selectedDayTasks.filter(task => {
       let taskStartDate = new Date(task.start_date);
       let taskEndDate = new Date(task.end_date);
-      if(task.user_id !== this.sidebarService.getUserId()){
-        return false;
-      }
       if (taskStartDate <= date && date <= taskEndDate) {
         return true;
       }
