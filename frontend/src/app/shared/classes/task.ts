@@ -1,7 +1,11 @@
+import { EventAlarm } from './eventAlarm';
+
 export class Task {
   constructor(
     public user_id: string,
     public name: string,
+    public priority: number,
+    public flexible: boolean,
     public start_date: Date,
     public end_date: Date,
     public whole_day: boolean,
@@ -12,7 +16,8 @@ export class Task {
     public repeat_interval?: number,
     public location?: string,
     public category?: number,
-    public description?: string
+    public description?: string,
+    public alarms?: EventAlarm[]
   ) {}
 
   getStartTime(): string {

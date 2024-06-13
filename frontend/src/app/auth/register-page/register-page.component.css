@@ -113,3 +113,20 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.have-user {
+  font-size: 1rem; /* Increase the font size */
+  font-weight: bold; /* Make the text bold */
+  color: #4B7F72; /* Change the color to match the theme */
+  font-family: 'Roboto', sans-serif; /* Change the font family, if desired */
+  text-align: left; /* Center the text */
+}
+
+.login-link {
+  color: #2E4D3B; /* Different color */
+  text-decoration: underline; /* Add underline */
+}
+
+.login-link:hover {
+  color: #C6D5D4; /* Darker shade on hover */
+}

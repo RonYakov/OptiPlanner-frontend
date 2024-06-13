@@ -36,7 +36,7 @@ export class LoginPageComponent {
         console.log(res);
         this.sidebarService.setUserName(res.data.name);
         this.sidebarService.setUserId(res.data.id);
-        this.sidebarService.toggleSignOutButton();
+        this.sidebarService.toggleIsOpen();
         this.router.navigate(['/my-calendar']);
       }
       else{

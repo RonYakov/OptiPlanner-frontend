@@ -12,7 +12,7 @@ import {AuthService} from "../../services/auth.service";
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit, OnDestroy {
-  isSignOutDisabled = true;
+  isSignOutDisabled = false;
   private subscriptions: Subscription[] = [];
   isOpen = false;
   faCalendar = faCalendar;
@@ -22,16 +22,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   faQuestionCircle = faQuestionCircle;
   faSignOutAlt = faSignOutAlt;
 
-  constructor(@Inject(WINDOW) private window: Window, private router: Router, private topbarService: SidebarService, private authService: AuthService) {}
-
-  toggleSidebar() {
-    this.isOpen = !this.isOpen;
-  }
+  constructor(@Inject(WINDOW) private window: Window, private router: Router, private sidebarService: SidebarService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.window.addEventListener('scroll', this.scroll, true);
     this.subscriptions.push(
-      this.topbarService.isSignOutDisabled$.subscribe(status => this.isSignOutDisabled = status)
+   //   this.sidebarService.isSignOutDisabled$.subscribe(status => this.isSignOutDisabled = status),
+      this.sidebarService.isOpen$.subscribe(status => this.isOpen = status)
     );
   }
 
@@ -67,8 +64,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   signOut(): void {
     this.authService.signout().subscribe(res => {
       if (res.status === 200) {
-        this.topbarService.setUserName('User');
-        this.topbarService.toggleSignOutButton();
+        this.sidebarService.setUserName('User');
+        this.sidebarService.toggleIsOpen();
         this.router.navigate(['/auth/login']);
       }
     });

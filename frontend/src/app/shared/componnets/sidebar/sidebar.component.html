@@ -1,4 +1,4 @@
-<div id="sidebar" class="sidebar">
+<div *ngIf="isOpen" id="sidebar" class="sidebar">
   <div class="button-container">
     <button type="button" class="calendar-button" (click)="navigateToCalendar()"><fa-icon [icon]="faCalendar"></fa-icon> My Calendar</button>
     <button type="button" (click)="navigateToNewEvent()"><fa-icon [icon]="faPlus"></fa-icon> New Event</button>

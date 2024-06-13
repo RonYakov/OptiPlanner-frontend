@@ -135,3 +135,62 @@ tbody td:hover {
   transform: none;
   background-color: #f3f3f3;
 }
+
+.content-container {
+  display: flex;
+  justify-content: center;
+  margin-left: 10%;
+}
+
+.loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80%; /* Match the width of the calendar */
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22);
+  font-family: 'Roboto', sans-serif;
+  margin: 10px; /* Match the margin of the calendar */
+  padding: 20px; /* Match the padding of the calendar */
+  box-sizing: border-box;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px; /* Space between spinner and text */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 1.5em;
+  color: #3498db;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

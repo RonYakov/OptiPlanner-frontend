@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,14 +7,29 @@ import { BehaviorSubject } from 'rxjs';
 export class SidebarService {
   private userName = new BehaviorSubject<string>((typeof localStorage !== 'undefined' ? localStorage.getItem('userName') : null) || 'User');
   private userId = new BehaviorSubject<string>((typeof localStorage !== 'undefined' ? localStorage.getItem('userId') : null) || '');
-  private isSignOutDisabled = new BehaviorSubject<boolean>((typeof localStorage !== 'undefined' ? localStorage.getItem('isSignOutDisabled') : null) === 'true' || false);
+  private isOpen = new BehaviorSubject<boolean>(
+    (typeof localStorage !== 'undefined' && localStorage.getItem('isOpen') !== null)
+      ? localStorage.getItem('isOpen') === 'true'
+      : false
+  );
+
+  isOpen$ = this.isOpen.asObservable();
   userName$ = this.userName.asObservable();
-  isSignOutDisabled$ = this.isSignOutDisabled.asObservable();
 
   setUserName(name: string): void {
     this.userName.next(name);
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('userName', name);
+    }
+  }
+
+  clearUserData(): void {
+    this.userName.next('User');
+    this.userId.next('');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('isSignOutDisabled');
     }
   }
 
@@ -29,11 +44,15 @@ export class SidebarService {
     return this.userId.value;
   }
 
-  toggleSignOutButton(): void {
-    const newValue = !this.isSignOutDisabled.value;
-    this.isSignOutDisabled.next(newValue);
+  getUserIdAsObservable(): Observable<string> {
+    return this.userId.asObservable();
+  }
+
+  toggleIsOpen(): void {
+    const newValue = !this.isOpen.value;
+    this.isOpen.next(newValue);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('isSignOutDisabled', String(newValue));
+      localStorage.setItem('isOpen', String(newValue));
     }
   }
 }
