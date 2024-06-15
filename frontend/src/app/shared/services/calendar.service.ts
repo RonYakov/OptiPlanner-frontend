@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {map, Observable} from "rxjs";
 import { Task } from '../classes/task';
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,11 @@ export class CalendarService {
 
   constructor(private http: HttpClient) {}
 
+
+
+
   getUserEvents(userid: string): Observable<Task[]> {
-    return this.http.get(`http://localhost:3000/calendar/getUserEvents`, { params: { userid }, observe: 'response' })
+    return this.http.get(environment.API_URL + `/calendar/getUserEvents`, { params: { userid }, observe: 'response' })
       .pipe(
         map((res: HttpResponse<any>) => {
           if (res.body.status === 200) {
