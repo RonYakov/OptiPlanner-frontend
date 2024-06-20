@@ -1,4 +1,5 @@
-<div>
+<div class="container">
+  <div class="create-event-container">
   <h1>Create an Event</h1>
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
@@ -143,4 +144,5 @@
 
     <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid">Create Event</button>
   </form>
+</div>
 </div>
