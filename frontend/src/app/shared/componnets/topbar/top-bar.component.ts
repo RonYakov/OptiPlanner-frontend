@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import { SidebarService } from '../../services/sidebar.service';
 import { Subscription } from 'rxjs';
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-topbar',
@@ -12,6 +13,7 @@ import { Subscription } from 'rxjs';
 export class TopBarComponent implements OnInit, OnDestroy {
   userName: string = 'User';
   private subscriptions: Subscription[] = [];
+  src: string = environment.API_URL + '/Optiplanner-logo.png';
 
   constructor(private authService: AuthService, private topbarService: SidebarService, private router: Router) {}
 
