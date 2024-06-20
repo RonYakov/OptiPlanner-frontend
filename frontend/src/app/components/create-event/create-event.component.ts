@@ -1,176 +1,288 @@
-import { Component, AfterViewInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CreateEventService } from '../../shared/services/create-event.service';
+import { SidebarService } from '../../shared/services/sidebar.service';
 
 @Component({
   selector: 'app-create-event',
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css']
 })
-export class CreateEventComponent implements AfterViewInit {
+export class CreateEventComponent implements OnInit {
+  eventForm: FormGroup;
+  priorityLevels = Array.from({length: 7}, (_, i) => i + 1).reverse();
+  flexibilityOptions = [
+    {value: 'yes', label: 'Yes'},
+    {value: 'no', label: 'No'}
+  ];
+  frequencyOptions = [
+    {label: 'Daily', value: 1},
+    {label: 'Weekly', value: 2},
+    {label: 'Monthly', value: 3}
+  ];
+  alarmUnits = ['Month', 'Week', 'Day', 'Hour', 'Minute'];
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) { }
-
-  ngAfterViewInit(): void {
-    this.setupPriorityBoxes();
-    this.setupEventListeners();
-
-    // Set up event listener for "Set another alarm" button
-    const addAlarmButton = this.elementRef.nativeElement.querySelector('#add-alarm');
-    addAlarmButton.addEventListener('click', () => this.addAlarm());
+  constructor(
+    private fb: FormBuilder,
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
+    private createEventService: CreateEventService,
+    private SidebarService: SidebarService,
+      ) {
+    this.eventForm = this.fb.group({
+      name: ['', Validators.required],
+      priority: ['', Validators.required],
+      flexibility: ['', Validators.required],
+      // dateRange: this.fb.group({
+      //   from: [''],
+      //   until: ['']
+      // }),
+      // timeRange: this.fb.group({
+      //   from: [''],
+      //   until: [''],
+      //   totalTimeNeeded: ['']
+      // }),
+      start_date: [''],
+      setTime: this.fb.group({
+        from: [''],
+        until: ['']
+      }),
+      whole_day: [false],
+      repeat: [false],
+      repeatOptions: this.fb.group({
+        frequency: [0],
+        always: [false],
+        times: [1]
+      }),
+      location: ['', Validators.required],
+      category: ['', Validators.required],
+      description: ['', Validators.required],
+      alarms: this.fb.array([])
+    });
   }
 
+  ngOnInit(): void {
+    this.setupPriorityBoxes();
+    this.setupEventListeners();
+  }
 
   setupPriorityBoxes(): void {
-    console.log('Setting up priority boxes...');
-
-    // Use Renderer2 to create and append DOM elements
-    const priorityContainer = this.elementRef.nativeElement.querySelector('#priority') as HTMLElement;
-    const priorityValue = this.elementRef.nativeElement.querySelector('#priority-value') as HTMLInputElement;
     const priorityColor = '#4B7F72';
-
-    // Check if priorityContainer already has children to avoid duplicates
-    if (priorityContainer.children.length === 0) {
-      for (let i = 7; i >= 1; i--) { // Reversed the loop to start with brightest color first
+    const priorityContainer = this.elementRef.nativeElement.querySelector('#priority');
+    if (priorityContainer) {
+      priorityContainer.innerHTML = ''; // Clear existing content
+      this.priorityLevels.forEach(level => {
+        const color = this.lightenDarkenColor(priorityColor, (level - 1) * 10);
         const box = this.renderer.createElement('div');
         this.renderer.addClass(box, 'priority-box');
-        this.renderer.setStyle(box, 'backgroundColor', this.lightenDarkenColor(priorityColor, (i - 1) * 10));
-        this.renderer.setProperty(box, 'dataset.value', i.toString());
+        this.renderer.setStyle(box, 'backgroundColor', color);
+        this.renderer.setProperty(box, 'dataset.value', level);
         this.renderer.listen(box, 'click', () => {
-          console.log('Priority box clicked:', box.dataset['value']!);
-          priorityValue.value = box.dataset['value']!;
-          // Remove 'selected' class from all priority boxes
-          document.querySelectorAll('.priority-box').forEach(b => b.classList.remove('selected'));
-          // Add 'selected' class to the clicked priority box
-          box.classList.add('selected');
+          this.eventForm.get('priority')?.setValue(level);
+          this.highlightSelectedPriorityBox(box);
         });
         this.renderer.appendChild(priorityContainer, box);
-      }
+      });
     }
   }
 
+  highlightSelectedPriorityBox(selectedBox: HTMLElement): void {
+    const boxes = this.elementRef.nativeElement.querySelectorAll('.priority-box');
+    boxes.forEach((box: HTMLElement) => this.renderer.removeClass(box, 'selected'));
+    this.renderer.addClass(selectedBox, 'selected');
+  }
+
   setupEventListeners(): void {
-    const flexibilityYes = this.elementRef.nativeElement.querySelector('#flexibility-yes') as HTMLInputElement;
-    const flexibilityNo = this.elementRef.nativeElement.querySelector('#flexibility-no') as HTMLInputElement;
-    const flexibilityYesOptions = this.elementRef.nativeElement.querySelector('#flexibility-yes-options') as HTMLElement;
-    const flexibilityNoOptions = this.elementRef.nativeElement.querySelector('#flexibility-no-options') as HTMLElement;
-    const wholeDayYes = this.elementRef.nativeElement.querySelector('#whole-day-yes') as HTMLInputElement;
-    const wholeDayNo = this.elementRef.nativeElement.querySelector('#whole-day-no') as HTMLInputElement;
-    const timeRangeYesOptions = this.elementRef.nativeElement.querySelector('#time-range-yes-options') as HTMLElement;
-    const timeRangeNoOptions = this.elementRef.nativeElement.querySelector('#time-range-no-options') as HTMLElement;
-    const totalTimeNeededContainer = this.elementRef.nativeElement.querySelector('#total-time-needed-container') as HTMLElement;
-    const repeat = this.elementRef.nativeElement.querySelector('#repeat') as HTMLInputElement;
-    const repeatOptions = this.elementRef.nativeElement.querySelector('#repeat-options') as HTMLElement;
-    const always = this.elementRef.nativeElement.querySelector('#always') as HTMLInputElement;
-    const repeatCountOptions = this.elementRef.nativeElement.querySelector('#repeat-count-options') as HTMLElement;
+    const form = this.eventForm;
 
-    flexibilityYes.addEventListener('change', () => {
-      flexibilityYesOptions.style.display = 'block';
-      flexibilityNoOptions.style.display = 'none';
-    });
+    form.get('flexibility')?.valueChanges.subscribe(value => {
+      const dateRangeGroup = form.get('dateRange') as FormGroup | null;
+      const timeRangeGroup = form.get('timeRange') as FormGroup | null;
+      const setDateGroup = form.get('setDate') as FormGroup | null;
+      const setTimeGroup = form.get('setTime') as FormGroup | null;
 
-    flexibilityNo.addEventListener('change', () => {
-      flexibilityYesOptions.style.display = 'none';
-      flexibilityNoOptions.style.display = 'block';
-    });
+      if (value === 'yes') {
+        if (dateRangeGroup && timeRangeGroup) {
+          dateRangeGroup.get('from')?.setValidators(Validators.required);
+          dateRangeGroup.get('until')?.setValidators(Validators.required);
+          timeRangeGroup.get('from')?.setValidators(Validators.required);
+          timeRangeGroup.get('until')?.setValidators(Validators.required);
+          timeRangeGroup.get('totalTimeNeeded')?.setValidators(Validators.required);
 
-    wholeDayYes.addEventListener('change', () => {
-      if (wholeDayYes.checked) {
-        timeRangeYesOptions.style.display = 'none';
-        totalTimeNeededContainer.style.display = 'none';
-      } else {
-        timeRangeYesOptions.style.display = 'block';
-        totalTimeNeededContainer.style.display = 'block';
+          setDateGroup?.get('date')?.clearValidators();
+          setTimeGroup?.get('from')?.clearValidators();
+          setTimeGroup?.get('until')?.clearValidators();
+        }
+      } else if (value === 'no') {
+        if (setDateGroup && setTimeGroup) {
+          setDateGroup.get('date')?.setValidators(Validators.required);
+          setTimeGroup.get('from')?.setValidators(Validators.required);
+          setTimeGroup.get('until')?.setValidators(Validators.required);
+
+          dateRangeGroup?.get('from')?.clearValidators();
+          dateRangeGroup?.get('until')?.clearValidators();
+          timeRangeGroup?.get('from')?.clearValidators();
+          timeRangeGroup?.get('until')?.clearValidators();
+          timeRangeGroup?.get('totalTimeNeeded')?.clearValidators();
+        }
+      }
+
+      if (dateRangeGroup && timeRangeGroup && setDateGroup && setTimeGroup) {
+        dateRangeGroup.get('from')?.updateValueAndValidity();
+        dateRangeGroup.get('until')?.updateValueAndValidity();
+        timeRangeGroup.get('from')?.updateValueAndValidity();
+        timeRangeGroup.get('until')?.updateValueAndValidity();
+        timeRangeGroup.get('totalTimeNeeded')?.updateValueAndValidity();
+        setDateGroup.get('date')?.updateValueAndValidity();
+        setTimeGroup.get('from')?.updateValueAndValidity();
+        setTimeGroup.get('until')?.updateValueAndValidity();
       }
     });
 
-    wholeDayNo.addEventListener('change', () => {
-      if (wholeDayNo.checked) {
-        timeRangeNoOptions.style.display = 'none';
+    form.get('wholeDay')?.valueChanges.subscribe(value => {
+      const timeRangeGroup = form.get('timeRange') as FormGroup | null;
+      const setTimeGroup = form.get('setTime') as FormGroup | null;
+
+      if (value) {
+        if (timeRangeGroup) {
+          timeRangeGroup.get('from')?.clearValidators();
+          timeRangeGroup.get('until')?.clearValidators();
+          timeRangeGroup.get('totalTimeNeeded')?.clearValidators();
+        }
+        if (setTimeGroup) {
+          setTimeGroup.get('from')?.clearValidators();
+          setTimeGroup.get('until')?.clearValidators();
+        }
       } else {
-        timeRangeNoOptions.style.display = 'block';
+        if (timeRangeGroup) {
+          timeRangeGroup.get('from')?.setValidators(Validators.required);
+          timeRangeGroup.get('until')?.setValidators(Validators.required);
+          timeRangeGroup.get('totalTimeNeeded')?.setValidators(Validators.required);
+        }
+        if (setTimeGroup) {
+          setTimeGroup.get('from')?.setValidators(Validators.required);
+          setTimeGroup.get('until')?.setValidators(Validators.required);
+        }
+      }
+
+      if (timeRangeGroup && setTimeGroup) {
+        timeRangeGroup.get('from')?.updateValueAndValidity();
+        timeRangeGroup.get('until')?.updateValueAndValidity();
+        timeRangeGroup.get('totalTimeNeeded')?.updateValueAndValidity();
+        setTimeGroup.get('from')?.updateValueAndValidity();
+        setTimeGroup.get('until')?.updateValueAndValidity();
       }
     });
 
-    repeat.addEventListener('change', () => {
-      if (repeat.checked) {
-        repeatOptions.style.display = 'block';
-      } else {
-        repeatOptions.style.display = 'none';
+    form.get('repeat')?.valueChanges.subscribe(value => {
+      const repeatOptionsGroup = form.get('repeatOptions') as FormGroup | null;
+
+      if (repeatOptionsGroup) {
+        if (value) {
+          repeatOptionsGroup.get('frequency')?.setValidators(Validators.required);
+        } else {
+          repeatOptionsGroup.get('frequency')?.clearValidators();
+          repeatOptionsGroup.get('always')?.clearValidators();
+          repeatOptionsGroup.get('times')?.clearValidators();
+        }
+
+        repeatOptionsGroup.get('frequency')?.updateValueAndValidity();
+        repeatOptionsGroup.get('always')?.updateValueAndValidity();
+        repeatOptionsGroup.get('times')?.updateValueAndValidity();
       }
     });
 
-    always.addEventListener('change', () => {
-      if (always.checked) {
-        repeatCountOptions.style.display = 'none';
-      } else {
-        repeatCountOptions.style.display = 'block';
+    form.get('repeatOptions.always')?.valueChanges.subscribe(value => {
+      const repeatOptionsGroup = form.get('repeatOptions') as FormGroup | null;
+
+      if (repeatOptionsGroup) {
+        if (value) {
+          repeatOptionsGroup.get('times')?.clearValidators();
+        } else {
+          repeatOptionsGroup.get('times')?.setValidators(Validators.required);
+        }
+        repeatOptionsGroup.get('times')?.updateValueAndValidity();
       }
     });
   }
 
-
-
   lightenDarkenColor(col: string, amt: number): string {
     let usePound = false;
-    if (col[0] === "#") {
+    if (col[0] === '#') {
       col = col.slice(1);
       usePound = true;
     }
 
     const num = parseInt(col, 16);
     let r = (num >> 16) + amt;
-    if (r > 255) r = 255;
-    else if (r < 0) r = 0;
-
     let g = ((num >> 8) & 0x00FF) + amt;
-    if (g > 255) g = 255;
-    else if (g < 0) g = 0;
-
     let b = (num & 0x0000FF) + amt;
-    if (b > 255) b = 255;
-    else if (b < 0) b = 0;
 
-    return (usePound ? "#" : "") + (b | (g << 8) | (r << 16)).toString(16);
+    r = r > 255 ? 255 : r < 0 ? 0 : r;
+    g = g > 255 ? 255 : g < 0 ? 0 : g;
+    b = b > 255 ? 255 : b < 0 ? 0 : b;
+
+    return (usePound ? '#' : '') + ((r << 16) | (g << 8) | b).toString(16);
   }
 
-  addAlarm() {
-    const alarmDiv = this.renderer.createElement('div');
-    this.renderer.addClass(alarmDiv, 'form-group');
-
-    const label = this.renderer.createElement('label');
-    const labelText = this.renderer.createText('Set another alarm:');
-    this.renderer.appendChild(label, labelText);
-    this.renderer.appendChild(alarmDiv, label);
-
-    const input = this.renderer.createElement('input');
-    this.renderer.setProperty(input, 'type', 'number');
-    this.renderer.setProperty(input, 'min', '1');
-    this.renderer.setProperty(input, 'max', '99');
-    this.renderer.setProperty(input, 'required', true);
-    this.renderer.appendChild(alarmDiv, input);
-
-    const select = this.renderer.createElement('select');
-    ['Month', 'Week', 'Day', 'Hour', 'Minute'].forEach(unit => {
-      const option = this.renderer.createElement('option');
-      this.renderer.setProperty(option, 'value', unit.toLowerCase());
-      const optionText = this.renderer.createText(unit);
-      this.renderer.appendChild(option, optionText);
-      this.renderer.appendChild(select, option);
+  addAlarm(): void {
+    const alarmGroup = this.fb.group({
+      time: ['', Validators.required],
+      unit: ['', Validators.required]
     });
-    this.renderer.setProperty(select, 'required', true);
-    this.renderer.appendChild(alarmDiv, select);
-
-    const span = this.renderer.createElement('span');
-    const spanText = this.renderer.createText('before');
-    this.renderer.appendChild(span, spanText);
-    this.renderer.appendChild(alarmDiv, span);
-
-    const additionalAlarms = this.elementRef.nativeElement.querySelector('#additional-alarms');
-    if (additionalAlarms) {
-      this.renderer.appendChild(additionalAlarms, alarmDiv);
-    } else {
-      console.error('Element with ID "additional-alarms" not found');
-    }
+    this.alarms.push(alarmGroup);
   }
+
+  removeAlarm(index: number): void {
+    this.alarms.removeAt(index);
+  }
+
+  get alarms(): FormArray {
+    return this.eventForm.get('alarms') as FormArray;
+  }
+
+  onSubmit() {
+    if (this.eventForm.valid) {
+      const formData = this.eventForm.value;
+      console.log(formData);
+
+      let start_date= new Date(formData.start_date);
+
+      let startTimeString = formData.setTime.from.split(':');
+      let endTimeString = formData.setTime.until.split(':');
+
+      let start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
+      let end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
+
+
+      console.log(start_time);
+
+
+      let event  = {
+        user_id: this.SidebarService.getUserId(),
+        name: formData.name,
+        priority: formData.priority,
+        flexible: false,
+        start_date: start_date,
+        end_date: start_date,
+        whole_day: formData.whole_day,
+        start_time: start_time,
+        end_time: end_time,
+        repeat: formData.repeat,
+        repeat_type: formData.repeatOptions.frequency,
+        repeat_interval: formData.repeatOptions.times,
+        location: formData.location,
+        category: formData.category,
+        description: formData.description,
+        alarms: formData.alarms
+      }
+      let res =  this.createEventService.createEvent(event);
+      res.subscribe((data) => {
+        console.log(data);
+      })
+    } else {
+      console.log('Form is invalid. Please correct the errors.');
+    }
+      }
 }
-
-

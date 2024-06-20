@@ -1,157 +1,146 @@
 <div>
   <h1>Create an Event</h1>
-  <form>
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <div class="inline-group">
-      <label for="name">Name of the event:</label>
-      <input type="text" id="name" name="name" required>
-      </div>
-    </div>
-
-    <!-- Priority -->
-    <div class="form-group">
-      <div class="inline-group">
-      <label for="priority">Priority:</label>
-      <input type="hidden" id="priority-value" name="priority">
-      <div id="priority" class="priority-container">
-        <!-- Priority boxes will be added dynamically here -->
-      </div>
+        <label for="name">Name of the event:</label>
+        <input formControlName="name" type="text" id="name" required>
       </div>
     </div>
 
     <div class="form-group">
       <div class="inline-group">
-      <label for="flexibility">Flexibility:</label>
-      <input type="radio" id="flexibility-yes" name="flexibility" value="yes" required>
-      <label for="flexibility-yes" class="radio-label">Yes</label>
-      <input type="radio" id="flexibility-no" name="flexibility" value="no" required>
-      <label for="flexibility-no" class="radio-label">No</label>
+        <label for="priority">Priority:</label>
+        <div id="priority" class="priority-container"></div>
+        <input type="hidden" formControlName="priority" id="priority-value" required>
       </div>
     </div>
 
-    <div id="flexibility-yes-options" class="flexibility-options">
-      <div class="form-group">
-        <div class="inline-group">
-        <label for="date-range-from">Set date (range): From:</label>
-        <input type="date" id="date-range-from" name="date-range-from" required>
-        <label for="date-range-until">Until:</label>
-        <input type="date" id="date-range-until" name="date-range-until" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="whole-day-yes">Set time (range):</label>
-        <input type="checkbox" id="whole-day-yes" name="whole-day">
-        <label for="whole-day-yes" class="checkbox-label">Whole day</label>
-        <div id="time-range-yes-options">
-          <div class="inline-group">
-          <label for="time-range-from">From:</label>
-          <input type="time" id="time-range-from" name="time-range-from" required>
-          <label for="time-range-until">Until:</label>
-          <input type="time" id="time-range-until" name="time-range-until" required>
-            </div>
-        </div>
-        <div id="total-time-needed-container">
-          <div class="inline-group">
-          <label for="total-time-needed">Choose total time needed:</label>
-          <input type="time" id="total-time-needed" name="total-time-needed" required>
-          </div>
+
+    <!-- Flexibility Section -->
+    <div class="form-group">
+      <div class="inline-group">
+        <label for="flexibility">Flexibility:</label>
+        <div *ngFor="let option of flexibilityOptions">
+          <input type="radio" [id]="'flexibility-' + option.value" [value]="option.value" formControlName="flexibility" required>
+          <label [for]="'flexibility-' + option.value" class="radio-label">{{ option.label }}</label>
         </div>
       </div>
     </div>
 
-    <div id="flexibility-no-options" class="flexibility-options">
+<!--    &lt;!&ndash; Flexibility: Yes &ndash;&gt;-->
+<!--    <div [style.display]="eventForm.get('flexibility')?.value === 'yes' ? 'block' : 'none'" class="flexibility-options">-->
+<!--      <div class="form-group" formGroupName="dateRange">-->
+<!--        <div class="inline-group">-->
+<!--          <label for="date-range-from">Set date (range): From:</label>-->
+<!--          <input type="date" id="date-range-from" formControlName="from" required>-->
+<!--          <label for="date-range-until">Until:</label>-->
+<!--          <input type="date" id="date-range-until" formControlName="until" required>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="form-group">-->
+<!--        <label for="whole-day-yes">Set time (range):</label>-->
+<!--        <input type="checkbox" id="whole-day-yes" formControlName="wholeDay">-->
+<!--        <label for="whole-day-yes" class="checkbox-label">Whole day</label>-->
+<!--        <div *ngIf="!eventForm.get('wholeDay')?.value" formGroupName="timeRange">-->
+<!--          <div class="inline-group">-->
+<!--            <label for="time-range-from">From:</label>-->
+<!--            <input type="time" id="time-range-from" formControlName="from" required>-->
+<!--            <label for="time-range-until">Until:</label>-->
+<!--            <input type="time" id="time-range-until" formControlName="until" required>-->
+<!--            <div class="inline-group">-->
+<!--              <label for="total-time-needed">Total time needed:</label>-->
+<!--              <input type="time" id="total-time-needed" formControlName="totalTimeNeeded" required>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <!-- Flexibility: No -->
+    <div *ngIf="eventForm.get('flexibility')?.value === 'no'">
       <div class="form-group">
         <div class="inline-group">
-        <label for="set-date">Set date:</label>
-        <input type="date" id="set-date" name="set-date" required>
+          <label for="set-date">Set date:</label>
+          <input type="date" id="set-date" formControlName="start_date" required>
         </div>
       </div>
       <div class="form-group">
-        <div class="inline-group">
         <label for="whole-day-no">Set time:</label>
-        <input type="checkbox" id="whole-day-no" name="whole-day">
+        <input type="checkbox" id="whole-day-no" formControlName="whole_day">
         <label for="whole-day-no" class="checkbox-label">Whole day</label>
-        </div>
-        <div id="time-range-no-options">
+        <div *ngIf="!eventForm.get('wholeDay')?.value" formGroupName="setTime">
           <div class="inline-group">
-          <label for="time-range-from-no">From:</label>
-          <input type="time" id="time-range-from-no" name="time-range-from-no" required>
-          <label for="time-range-until-no">Until:</label>
-          <input type="time" id="time-range-until-no" name="time-range-until-no" required>
-        </div>
+            <label for="time-from">From:</label>
+            <input type="time" id="time-from" formControlName="from" required>
+            <label for="time-until">Until:</label>
+            <input type="time" id="time-until" formControlName="until" required>
+          </div>
         </div>
       </div>
+
+      <!-- Repeat Section -->
       <div class="form-group">
-        <input type="checkbox" id="repeat" name="repeat" checked> <!-- Add the 'checked' attribute here -->
+        <label for="repeat">Repeat:</label>
+        <input type="checkbox" id="repeat" formControlName="repeat">
         <label for="repeat" class="checkbox-label">Repeat</label>
-        <div id="repeat-options">
-          <select id="repeat-frequency" name="repeat-frequency" required>
-            <option value="year">Every Year</option>
-            <option value="month">Every Month</option>
-            <option value="week">Every Week</option>
-            <option value="day">Every Day</option>
-          </select>
+        <div *ngIf="eventForm.get('repeat')?.value" formGroupName="repeatOptions">
           <div class="inline-group">
-          <input type="checkbox" id="always" name="always">
-          <label for="always" class="checkbox-label">Always</label>
-          <div id="repeat-count-options">
-            <label for="how-many-times">How many times?</label>
-            <input type="number" id="how-many-times" name="how-many-times" min="1" max="20" required>
+            <label for="frequency">Frequency:</label>
+            <select id="frequency" formControlName="frequency" required>
+              <option *ngFor="let option of frequencyOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
           </div>
+          <div class="inline-group">
+            <input type="checkbox" id="repeat-always" formControlName="always">
+            <label for="repeat-always" class="checkbox-label">Always</label>
+          </div>
+          <div class="inline-group" *ngIf="!eventForm.get('repeatOptions.always')?.value">
+            <label for="times">Times:</label>
+            <input type="number" id="times" formControlName="times" required>
           </div>
         </div>
       </div>
     </div>
 
-      <!-- Location -->
-      <div class="form-group">
-        <div class="inline-group">
+    <div class="form-group">
+      <div class="inline-group">
         <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required>
-        </div>
+        <input type="text" id="location" formControlName="location" required>
       </div>
+    </div>
 
-      <!-- Category -->
-      <div class="form-group">
-        <div class="inline-group">
+    <div class="form-group">
+      <div class="inline-group">
         <label for="category">Category:</label>
-        <input type="text" id="category" name="category" required>
-        </div>
+        <input type="text" id="category" formControlName="category" required>
       </div>
+    </div>
 
-      <!-- Description -->
-      <div class="form-group">
-        <div class="inline-group">
+    <div class="form-group">
+      <div class="inline-group">
         <label for="description">Description:</label>
-        <input type="text" id="description" name="description" required>
+        <textarea id="description" formControlName="description" required></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="inline-group">
+        <div formArrayName="alarms">
+          <button id="add-alarm" type="button" (click)="addAlarm()">Add Alarm</button>
+          <div *ngFor="let alarm of alarms.controls; let i = index" [formGroupName]="i" class="alarm-group">
+            <label for="time-{{i}}" class="alarm-label">Time:</label>
+            <input type="text" id="time-{{i}}" formControlName="time" class="alarm-input">
+            <label for="unit-{{i}}" class="alarm-label">Unit:</label>
+            <select id="unit-{{i}}" formControlName="unit" class="alarm-input">
+              <option *ngFor="let unit of alarmUnits" [value]="unit">{{ unit }}</option>
+            </select>
+            <button id="remove-alarm" type="button" (click)="removeAlarm(i)" class="remove-alarm">Remove</button>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Set Alarm -->
-      <div class="form-group">
-        <div class="inline-group">
-        <label for="alarm">Set alarm:</label>
-        <input type="number" id="alarm" name="alarm" min="1" max="99" required>
-        <select id="alarm-unit" name="alarm-unit" required>
-          <option value="month">Month</option>
-          <option value="week">Week</option>
-          <option value="day">Day</option>
-          <option value="hour">Hour</option>
-          <option value="min">Minute</option>
-        </select>
-        <label>before</label>
-        </div>
-      </div>
-
-      <!-- Set another alarm -->
-      <div class="form-group">
-        <div id="additional-alarms"></div>
-        <button type="button" id="add-alarm">Set another alarm</button>
-      </div>
-
-      <!-- Submit button -->
-      <div class="form-group">
-        <button type="submit">Create Event</button>
-      </div>
+    <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid">Create Event</button>
   </form>
 </div>

@@ -138,7 +138,7 @@ export class CalendarComponent implements OnInit {
 
       if (userId) {
         this.calendarService.getUserEvents(userId).subscribe(tasks => {
-          this.selectedDayTasks = tasks;
+          this.selectedDayTasks = tasks;//todo-change name
           console.log("Fetched tasks: ", this.selectedDayTasks);
           this.updateCalendar();
           this.isLoading = false;
@@ -256,9 +256,16 @@ export class CalendarComponent implements OnInit {
 
   getTasksForDay(date: Date) {
     return this.selectedDayTasks.filter(task => {
-      let taskStartDate = new Date(task.start_date);
-      let taskEndDate = new Date(task.end_date);
-      if (taskStartDate <= date && date <= taskEndDate) {
+      let taskStartDate = task.start_date;
+      let taskEndDate = task.end_date;
+
+      if (taskStartDate.getDate() <= date.getDate() &&
+        taskStartDate.getMonth() <= date.getMonth() &&
+        taskStartDate.getFullYear() <= date.getFullYear() &&
+        date.getDate() <= taskEndDate.getDate() &&
+        date.getMonth() <= taskEndDate.getMonth() &&
+        date.getFullYear() <= taskEndDate.getFullYear()) {
+
         return true;
       }
       else{
@@ -271,7 +278,6 @@ export class CalendarComponent implements OnInit {
               if (daysDifference >= 0 && daysDifference < repeatInterval) {
                 return true;
               }
-              break;
               break;
             case 2: // WEEKLY
               let weeksDifference = Math.floor(daysDifference / 7);

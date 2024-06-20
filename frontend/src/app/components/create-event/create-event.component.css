@@ -37,26 +37,13 @@ h1 {
   font-size: 1.1em; /* Increase the font size */
 }
 
-.priority-container {
-  display: flex;
-  gap: 5px;
-}
-
-.priority-box {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  margin-right: 5px;
-  cursor: pointer;
-}
 
 .flexibility-options {
   display: none;
 }
 
-/* Add styling for the selected priority */
-.priority-box.selected {
-  border: 2px solid #000;
+.ng-invalid.ng-touched:not(form) {
+  border: 1px solid red;
 }
 
 .radio-label,
@@ -117,12 +104,17 @@ button[type="submit"]:hover {
   background-color: #365A54; /* Even darker shade on hover */
 }
 
+button:disabled {
+  background-color: #cccccc;
+}
+
 .date-input,
 .time-input {
   margin-right: 5px; /* Adjust as needed */
 }
 
-#add-alarm {
+#add-alarm
+#remove-alarm{
   margin-top: 1px;
   padding: 10px;
   border: none;
@@ -150,4 +142,22 @@ button[type="submit"]:hover {
 
 .inline-group input {
   width: 100%;
+}
+
+.priority-container {
+  display: inline-block; /* Display priority boxes in the same line */
+  margin-bottom: 15px;
+}
+
+.priority-box {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.priority-box.selected {
+  border: 2px solid #000;
 }
