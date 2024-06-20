@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0342c95-305d-40c0-8a8c-801de79eb401" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/services/create-event.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/calendar/calendar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/calendar/calendar.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/create-event/create-event.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +72,7 @@
       <workItem from="1718495831306" duration="6309000" />
       <workItem from="1718503906946" duration="10000" />
       <workItem from="1718817797781" duration="15642000" />
-      <workItem from="1718875260699" duration="8014000" />
+      <workItem from="1718875260699" duration="9163000" />
     </task>
     <servers />
   </component>
