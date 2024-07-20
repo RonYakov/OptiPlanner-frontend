@@ -1,8 +1,10 @@
 import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { CreateEventService } from '../../shared/services/create-event.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
+import { Category } from "../../shared/enum/event-category.enum";
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-create-event',
@@ -29,6 +31,7 @@ export class CreateEventComponent implements OnInit {
     private elementRef: ElementRef,
     private createEventService: CreateEventService,
     private SidebarService: SidebarService,
+    private router: Router
       ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
@@ -56,7 +59,7 @@ export class CreateEventComponent implements OnInit {
         times: [1]
       }),
       location: ['', Validators.required],
-      category: ['', Validators.required],
+      category: [Category.WORK, Validators.required],
       description: ['', Validators.required],
       alarms: this.fb.array([])
     });
@@ -279,7 +282,7 @@ export class CreateEventComponent implements OnInit {
       }
       let res =  this.createEventService.createEvent(event);
       res.subscribe((data) => {
-        console.log(data);
+        this.router.navigate(['/my-calendar']);
       })
     } else {
       console.log('Form is invalid. Please correct the errors.');

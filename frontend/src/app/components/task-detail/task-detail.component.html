@@ -1,0 +1,50 @@
+<div class="popup">
+  <div class="popup-content">
+    <h2 class="task-title">{{ task.name }}</h2>
+
+    <div class="task-section">
+      <div class="task-section-title">Priority</div>
+      <div class="task-section-content">{{ task.priority }}</div>
+    </div>
+
+    <div class="task-section">
+      <div class="task-section-title">Flexibility</div>
+      <div class="task-section-content">{{ task.flexible ? 'Flexible' : 'Not Flexible' }}</div>
+    </div>
+
+    <div class="task-section">
+      <div class="task-section-title">Dates</div>
+      <div class="task-section-content">
+        Start: {{ getFormattedDate(task.start_date) }} {{ getFormattedTime(task.start_time) }}<br>
+        End: {{ getFormattedDate(task.end_date) }} {{ getFormattedTime(task.end_time) }}
+      </div>
+    </div>
+
+    <div *ngIf="task.whole_day" class="task-section">
+      <div class="task-section-title">Duration</div>
+      <div class="task-section-content">Whole day event</div>
+    </div>
+
+    <div *ngIf="task.repeat" class="task-section">
+      <div class="task-section-title">Repetition</div>
+      <div class="task-section-content">
+        Repeats every {{ task.repeat_interval }} {{ task.repeat_type === 1 ? 'day(s)' : task.repeat_type === 2 ? 'week(s)' : 'month(s)' }}
+      </div>
+    </div>
+
+    <div *ngIf="task.location" class="task-section">
+      <div class="task-section-title">Location</div>
+      <div class="task-section-content">{{ task.location }}</div>
+    </div>
+
+    <div *ngIf="task.description" class="task-section">
+      <div class="task-section-title">Description</div>
+      <div class="task-section-content">{{ task.description }}</div>
+    </div>
+
+    <div class="button-container">
+      <button class="close-task-button" (click)="onClose()">Close</button>
+      <button class="delete-task-button" (click)="onDelete()">Delete</button>
+    </div>
+  </div>
+</div>

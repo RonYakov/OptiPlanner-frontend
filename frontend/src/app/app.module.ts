@@ -12,13 +12,15 @@ import { TasksPopupComponent } from './components/tasks.popup/tasks.popup.compon
 import { WINDOW_PROVIDERS } from './shared/componnets/sidebar/window.providers';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { provideClientHydration } from '@angular/platform-browser';
+import { TaskDetailComponent } from './components/task-detail/task-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
     CreateEventComponent,
-    TasksPopupComponent
+    TasksPopupComponent,
+    TaskDetailComponent
   ],
   imports: [
     BrowserModule,

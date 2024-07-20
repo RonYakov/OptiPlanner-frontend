@@ -12,8 +12,47 @@ export class TasksPopupComponent implements OnInit, OnChanges {
   @Input() tasks: Task[] = [];
   @Output() close = new EventEmitter<void>();
 
+  selectedTask?: Task;
+  showTaskDetail = false;
   times: { time: string, displayTime: string, isAfternoon: boolean }[] = [];
   closestTime: string = "";
+  googleCalendarColors:Record<string, string> = {
+    'WORK': '#2962FF',
+    'PERSONAL': '#43A047',
+    'FAMILY': '#FB8C00',
+    'HEALTH': '#D50000',
+    'EDUCATION': '#8E24AA',
+    'FINANCE': '#FDD835',
+    'SOCIAL': '#00BFA5',
+    'TRAVEL': '#039BE5',
+    'ENTERTAINMENT': '#E64A19',
+    'SPORTS': '#AEEA00',
+    'MEETING': '#304FFE',
+    'HOLIDAY': '#64DD17',
+    'APPOINTMENT': '#FFAB00',
+    'REMINDER': '#795548',
+    'SHOPPING': '#9E9E9E',
+    'OTHER': '#607D8B'
+  };
+  googleCalendarDarkerColors: Record<string, string> = {
+    'WORK': '#1D47B2',
+    'PERSONAL': '#2E7A35',
+    'FAMILY': '#C06B00',
+    'HEALTH': '#9C0000',
+    'EDUCATION': '#661D79',
+    'FINANCE': '#BDA600',
+    'SOCIAL': '#008373',
+    'TRAVEL': '#0273A2',
+    'ENTERTAINMENT': '#A83614',
+    'SPORTS': '#7EAD00',
+    'MEETING': '#2335B3',
+    'HOLIDAY': '#469B12',
+    'APPOINTMENT': '#C38300',
+    'REMINDER': '#5A3E37',
+    'SHOPPING': '#6B6B6B',
+    'OTHER': '#455A64'
+  };
+  categories = ['WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION', 'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS', 'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'];
 
   ngOnInit() {
     this.generateTimes();
@@ -33,6 +72,24 @@ export class TasksPopupComponent implements OnInit, OnChanges {
 
         this.times.push(timeObject);
       }
+    }
+  }
+
+  getColorForCategory(categoryNumber: number | undefined): string {
+    if (categoryNumber !== undefined && categoryNumber >= 1 && categoryNumber <= this.categories.length) {
+      const category = this.categories[categoryNumber - 1]; // Subtract 1 because array indices start at 0
+      return this.googleCalendarColors[category];
+    } else {
+      return this.googleCalendarColors['OTHER'];
+    }
+  }
+
+  getBorderColorForCategory(categoryNumber: number | undefined): string {
+    if (categoryNumber !== undefined && categoryNumber >= 1 && categoryNumber <= this.categories.length) {
+      const category = this.categories[categoryNumber - 1]; // Subtract 1 because array indices start at 0
+      return this.googleCalendarDarkerColors[category];
+    } else {
+      return this.googleCalendarDarkerColors['OTHER'];
     }
   }
 
@@ -139,7 +196,15 @@ export class TasksPopupComponent implements OnInit, OnChanges {
 
   highlightTasks(tasks: Task[]) {
     this.tasks = tasks;
-    console.log(this.tasks)
     this.showPopup = true;
   }
+
+  selectTask(task: Task) {
+    this.selectedTask = task;
+  }
+
+  closeTaskDetail() {
+    this.selectedTask = undefined;
+  }
+
 }

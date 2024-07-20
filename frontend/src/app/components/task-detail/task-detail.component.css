@@ -1,0 +1,143 @@
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.popup-content {
+  background-color: #e0e8f0;
+  width: 90%;
+  max-width: 450px;
+  padding: 30px;
+  border-radius: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+}
+
+.task-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.task-section {
+  margin-bottom: 15px;
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.task-section:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.task-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.task-section-content {
+  font-size: 15px;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.task-alarms {
+  list-style-type: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.task-alarms li {
+  font-size: 14px;
+  color: #34495e;
+  margin: 5px 0;
+  padding: 8px 12px;
+  background-color: #e9f0f6;
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.close-task-button, .delete-task-button {
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+  flex: 1;
+  margin: 0 5px;
+}
+
+.close-task-button {
+  background-color: #3498db;
+}
+
+.close-task-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-task-button {
+  background-color: #e74c3c;
+}
+
+.delete-task-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+  .popup-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .task-title {
+    font-size: 22px;
+  }
+
+  .task-section-title {
+    font-size: 13px;
+  }
+
+  .task-section-content {
+    font-size: 14px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .close-task-button, .delete-task-button {
+    margin: 5px 0;
+  }
+}
