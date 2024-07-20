@@ -21,7 +21,7 @@
     <!-- Flexibility Section -->
     <div class="form-group">
       <div class="inline-group">
-        <label for="flexibility">Flexibility:</label>
+        <label>Flexibility:</label>
         <div *ngFor="let option of flexibilityOptions">
           <input type="radio" [id]="'flexibility-' + option.value" [value]="option.value" formControlName="flexibility" required>
           <label [for]="'flexibility-' + option.value" class="radio-label">{{ option.label }}</label>
@@ -71,7 +71,7 @@
         <input type="checkbox" id="whole-day-no" formControlName="whole_day">
         <label for="whole-day-no" class="checkbox-label">Whole day</label>
         <div *ngIf="!eventForm.get('wholeDay')?.value" formGroupName="setTime">
-          <div class="inline-group">
+          <div class="inline-group" *ngIf="eventForm.get('whole_day')?.value !== null && !eventForm.get('whole_day')?.value">
             <label for="time-from">From:</label>
             <input type="time" id="time-from" formControlName="from" required>
             <label for="time-until">Until:</label>
@@ -114,7 +114,25 @@
     <div class="form-group">
       <div class="inline-group">
         <label for="category">Category:</label>
-        <input type="text" id="category" formControlName="category" required>
+        <select id="category" formControlName="category" required>
+          <option value="" disabled selected>Please choose a category</option>
+          <option value="WORK">Work</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="FAMILY">Family</option>
+          <option value="HEALTH">Health</option>
+          <option value="EDUCATION">Education</option>
+          <option value="FINANCE">Finance</option>
+          <option value="SOCIAL">Social</option>
+          <option value="TRAVEL">Travel</option>
+          <option value="ENTERTAINMENT">Entertainment</option>
+          <option value="SPORTS">Sports</option>
+          <option value="MEETING">Meeting</option>
+          <option value="HOLIDAY">Holiday</option>
+          <option value="APPOINTMENT">Appointment</option>
+          <option value="REMINDER">Reminder</option>
+          <option value="SHOPPING">Shopping</option>
+          <option value="OTHER">Other</option>
+        </select>
       </div>
     </div>
 

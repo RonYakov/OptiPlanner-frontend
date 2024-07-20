@@ -8,10 +8,13 @@
             <span class="line" [class.current-time]="isCloseToCurrentTime(timeObj.time)"></span>
             <ng-container *ngFor="let task of tasks">
               <div *ngIf="isTaskInTimeRange(task, timeObj.time)" class="task"
+                   (click)="selectTask(task)"
                    [style.top.px]="calculateTaskTop(task, timeObj.time)"
                    [style.height.px]="calculateTaskHeight(task)"
                    [style.width]="calculateTaskWidthAndPosition(task, tasks).width"
-                   [style.left]="calculateTaskWidthAndPosition(task, tasks).left">
+                   [style.left]="calculateTaskWidthAndPosition(task, tasks).left"
+                   [style.background-color]="getColorForCategory(task.category)"
+                   [style.border-left]="'4px solid ' + getBorderColorForCategory(task.category)">
                 <div class="task-title">{{task.name}}</div>
                 <div class="task-description">{{task.description}}</div>
               </div>
@@ -23,3 +26,8 @@
     <button class="btn close-button" (click)="closePopup()">Close</button>
   </div>
 </div>
+
+<div *ngIf="selectedTask">
+  <app-task-detail [task]="selectedTask" (close)="closeTaskDetail()"></app-task-detail>
+</div>
+

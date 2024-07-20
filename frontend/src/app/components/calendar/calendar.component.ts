@@ -18,92 +18,31 @@ import { AuthService } from '../../shared/services/auth.service';
 export class CalendarComponent implements OnInit {
   @Output() dayClicked = new EventEmitter<Task[]>();
   @ViewChild(TasksPopupComponent) tasksPopup!: TasksPopupComponent;
-  googleCalendarColors = {
-    red: '#D50000',
-    blue: '#2962FF',
-    green: '#43A047',
-    yellow: '#FDD835',
-    orange: '#FB8C00',
-    deepPurple: '#8E24AA',
-    lightBlue: '#039BE5',
-    teal: '#00BFA5',
-    lime: '#AEEA00',
-    deepOrange: '#E64A19',
-    indigo: '#304FFE',
-    lightGreen: '#64DD17',
-    amber: '#FFAB00',
-    brown: '#795548',
-    grey: '#9E9E9E',
-    blueGrey: '#607D8B'
+  googleCalendarColors:Record<string, string> = {
+     'WORK': '#2962FF',
+     'PERSONAL': '#43A047',
+     'FAMILY': '#FB8C00',
+     'HEALTH': '#D50000',
+     'EDUCATION': '#8E24AA',
+     'FINANCE': '#FDD835',
+     'SOCIAL': '#00BFA5',
+     'TRAVEL': '#039BE5',
+     'ENTERTAINMENT': '#E64A19',
+     'SPORTS': '#AEEA00',
+     'MEETING': '#304FFE',
+     'HOLIDAY': '#64DD17',
+     'APPOINTMENT': '#FFAB00',
+     'REMINDER': '#795548',
+     'SHOPPING': '#9E9E9E',
+     'OTHER': '#607D8B'
   };
+  categories = ['WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION', 'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS', 'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'];
+
   currentDate: moment.Moment = moment();
   currentMonth: string = this.currentDate.format('MMMM, YYYY');
   days: any[] = [];
   selectedDayTasks: Task[] = [];
   isLoading = true;
-
-  // selectedDayTasksTesting: Task[] = [
-  //   new Task(
-  //     1, // user_id
-  //     'Morning Run', // name
-  //     new Date(2024, 5, 11), // start_date
-  //     new Date(2024, 5, 11), // end_date
-  //     false, // whole_day
-  //     new Date(2022, 1, 1, 6, 0), // start_time
-  //     new Date(2022, 1, 1, 7, 0), // end_time
-  //     true, // repeat
-  //     1, // repeat_type
-  //     1, // repeat_interval
-  //     'Park', // location
-  //     1, // category
-  //     'Running in the park' // description
-  //   ),
-  //   new Task(
-  //     "d438b438-a041-7013-6eb6-3a4be96d36d3",
-  //     'Team Meeting',
-  //     new Date(2024, 5, 8), // start_date
-  //     new Date(2024, 5, 8), // end_date
-  //     false,
-  //     new Date(2024, 5, 8, 10, 0), // start_time
-  //     new Date(2024, 5, 10, 11, 0), // end_time
-  //     true,
-  //     4,
-  //     5,
-  //     'Office',
-  //     2,
-  //     'Discussing the progress of the project'
-  //   ),
-  //   // new Task(
-  //   //   1,
-  //   //   'Lunch with John',
-  //   //   new Date(2024, 5, 15), // start_date
-  //   //   new Date(2024, 5, 15), // end_date
-  //   //   false,
-  //   //   new Date(2022, 1, 1, 13, 0),
-  //   //   new Date(2022, 1, 1, 14, 0),
-  //   //   false,
-  //   //   undefined,
-  //   //   undefined,
-  //   //   'Restaurant',
-  //   //   3,
-  //   //   'Catching up with John'
-  //   // ),
-  //   // new Task(
-  //   //   1,
-  //   //   'Reading',
-  //   //   new Date(2024, 5, 30), // start_date
-  //   //   new Date(2024, 5, 30), // end_date
-  //   //   false,
-  //   //   new Date(2022, 1, 1, 20, 0),
-  //   //   new Date(2022, 1, 1, 21, 0),
-  //   //   true,
-  //   //   1,
-  //   //   1,
-  //   //   'Home',
-  //   //   4,
-  //   //   'Reading a new book'
-  //   // )
-  // ]; //todo - juat for testing
 
   hebrewMonths: { [key: string]: string } = {};
 
@@ -134,12 +73,10 @@ export class CalendarComponent implements OnInit {
 
     if (isPlatformBrowser(this.platformId)) {
       const userId = localStorage.getItem('userId');
-      console.log('Initial userId from localStorage:', userId);
 
       if (userId) {
         this.calendarService.getUserEvents(userId).subscribe(tasks => {
-          this.selectedDayTasks = tasks;//todo-change name
-          console.log("Fetched tasks: ", this.selectedDayTasks);
+          this.selectedDayTasks = tasks;
           this.updateCalendar();
           this.isLoading = false;
         }, error => {
@@ -171,7 +108,6 @@ export class CalendarComponent implements OnInit {
       return `ל"${hebrewNumerals[number - 31]}`;
     }
   }
-
 
   generateCalendar(year: number, month: number): any[][] {
     const firstDayOfMonth = moment([year, month, 1]);
@@ -221,6 +157,14 @@ export class CalendarComponent implements OnInit {
     return calendarData;
   }
 
+  getColorForCategory(categoryNumber: number): string {
+    if (categoryNumber >= 1 && categoryNumber <= this.categories.length) {
+      const category = this.categories[categoryNumber - 1]; // Subtract 1 because array indices start at 0
+      return this.googleCalendarColors[category];
+    } else {
+      return this.googleCalendarColors['OTHER'];
+    }
+  }
 
   prevMonth() {
     this.currentDate = this.currentDate.subtract(1, 'month');
@@ -244,7 +188,6 @@ export class CalendarComponent implements OnInit {
   generateDay(day: number, month: number, year: number) {
     let date = new Date(year, month, day);
     let tasksForDay = this.getTasksForDay(date);
-    console.log(`Tasks for day ${day}:`, tasksForDay); // Log the tasks for the day
     let dayData = {
       date: day,
       tasks: tasksForDay,
@@ -307,9 +250,6 @@ export class CalendarComponent implements OnInit {
     });
   }
 
-  showTasks(day: any) {
-    console.log("Tasks for: ", day);
-  }
 
   getMonthName(monthIndex: number): string {
     return moment.months()[monthIndex];
@@ -331,6 +271,7 @@ export class CalendarComponent implements OnInit {
 
     if (!day.isFiller) {
       this.tasksPopup.highlightTasks(this.getTasksForDay(new Date(day.year, day.month, day.date)));
+      console.log('Tasks for the day:', this.getTasksForDay(new Date(day.year, day.month, day.date)));
     }
 
     this.cdr.detectChanges();

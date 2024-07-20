@@ -109,15 +109,14 @@
   position: absolute;
   left: 80px; /* Adjust as needed */
   width: calc(80% - 60px); /* Adjust as needed */
-  background-color: #4285F4; /* Google Calendar blue */
   color: white;
   border-radius: 4px;
   padding: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
   font-family: Arial, sans-serif;
   font-size: 14px;
   z-index: 2; /* Ensure it's above other elements */
-  border-left: 4px solid #3367D6; /* A darker shade for the left border */
+  overflow: hidden; /* Ensure large content is handled */
 }
 
 .task .task-title {
@@ -136,12 +135,14 @@
   display: block; /* Ensure the description is displayed as a block element */
   line-height: 1.2; /* Adjust line height for proper spacing */
   width: 100%;
-  overflow: auto;
+  overflow: auto; /* Allow scrolling for overflow content */
 }
 
 .task:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  font-weight: bold; /* Ensure font weight is consistent on hover */
 }
+
 
 
 .tasks {
@@ -184,7 +185,16 @@
   background: #555; /* scrollbar color on hover */
 }
 
-.btn {
+
+.close-button:hover {
+  background-color: #365A54; /* Even darker shade on hover */
+}
+
+.close-button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 30%;
   padding: 10px;
   border: none;
@@ -195,13 +205,19 @@
   transition: 0.3s;
 }
 
-.btn:hover {
-  background-color: #365A54; /* Even darker shade on hover */
+.close-task-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #4B7F72;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.close-button {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+.close-task-button:hover {
+  background-color: #365A54;
 }

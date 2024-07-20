@@ -36,10 +36,10 @@
           <div class="hebrew-date">{{ day.hebrewDate }}</div>
           <div *ngFor="let task of day.tasks">
             <span class="task-dot" [title]="task.title"></span>
-            <div class="task-square" [style.background]="task.color"></div>
+            <div class="task-square" [style.background]="getColorForCategory(task.category)"></div>
           </div>
           <div class="task-count-container">
-            <div class="task-count" *ngFor="let task of day.tasks" [style.background]="googleCalendarColors.lightBlue" [title]="task.name"></div>
+            <div class="task-count" *ngFor="let task of day.tasks" [style.background]="getColorForCategory(task.category)" [title]="task.name"></div>
           </div>
         </td>
       </tr>
