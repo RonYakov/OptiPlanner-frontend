@@ -32,7 +32,7 @@ export class CreateEventComponent implements OnInit {
     private createEventService: CreateEventService,
     private SidebarService: SidebarService,
     private router: Router
-      ) {
+  ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
       priority: ['', Validators.required],
@@ -143,72 +143,24 @@ export class CreateEventComponent implements OnInit {
       }
     });
 
-    form.get('wholeDay')?.valueChanges.subscribe(value => {
-      const timeRangeGroup = form.get('timeRange') as FormGroup | null;
+    form.get('whole_day')?.valueChanges.subscribe(value => {
       const setTimeGroup = form.get('setTime') as FormGroup | null;
 
-      if (value) {
-        if (timeRangeGroup) {
-          timeRangeGroup.get('from')?.clearValidators();
-          timeRangeGroup.get('until')?.clearValidators();
-          timeRangeGroup.get('totalTimeNeeded')?.clearValidators();
-        }
-        if (setTimeGroup) {
+      if (setTimeGroup) {
+        if (value) {
           setTimeGroup.get('from')?.clearValidators();
           setTimeGroup.get('until')?.clearValidators();
-        }
-      } else {
-        if (timeRangeGroup) {
-          timeRangeGroup.get('from')?.setValidators(Validators.required);
-          timeRangeGroup.get('until')?.setValidators(Validators.required);
-          timeRangeGroup.get('totalTimeNeeded')?.setValidators(Validators.required);
-        }
-        if (setTimeGroup) {
+        } else {
           setTimeGroup.get('from')?.setValidators(Validators.required);
           setTimeGroup.get('until')?.setValidators(Validators.required);
         }
-      }
 
-      if (timeRangeGroup && setTimeGroup) {
-        timeRangeGroup.get('from')?.updateValueAndValidity();
-        timeRangeGroup.get('until')?.updateValueAndValidity();
-        timeRangeGroup.get('totalTimeNeeded')?.updateValueAndValidity();
         setTimeGroup.get('from')?.updateValueAndValidity();
         setTimeGroup.get('until')?.updateValueAndValidity();
       }
     });
-
-    form.get('repeat')?.valueChanges.subscribe(value => {
-      const repeatOptionsGroup = form.get('repeatOptions') as FormGroup | null;
-
-      if (repeatOptionsGroup) {
-        if (value) {
-          repeatOptionsGroup.get('frequency')?.setValidators(Validators.required);
-        } else {
-          repeatOptionsGroup.get('frequency')?.clearValidators();
-          repeatOptionsGroup.get('always')?.clearValidators();
-          repeatOptionsGroup.get('times')?.clearValidators();
-        }
-
-        repeatOptionsGroup.get('frequency')?.updateValueAndValidity();
-        repeatOptionsGroup.get('always')?.updateValueAndValidity();
-        repeatOptionsGroup.get('times')?.updateValueAndValidity();
-      }
-    });
-
-    form.get('repeatOptions.always')?.valueChanges.subscribe(value => {
-      const repeatOptionsGroup = form.get('repeatOptions') as FormGroup | null;
-
-      if (repeatOptionsGroup) {
-        if (value) {
-          repeatOptionsGroup.get('times')?.clearValidators();
-        } else {
-          repeatOptionsGroup.get('times')?.setValidators(Validators.required);
-        }
-        repeatOptionsGroup.get('times')?.updateValueAndValidity();
-      }
-    });
   }
+
 
   lightenDarkenColor(col: string, amt: number): string {
     let usePound = false;
@@ -250,7 +202,7 @@ export class CreateEventComponent implements OnInit {
       const formData = this.eventForm.value;
       console.log(formData);
 
-      let start_date= new Date(formData.start_date);
+      let start_date = new Date(formData.start_date);
 
       let startTimeString = formData.setTime.from.split(':');
       let endTimeString = formData.setTime.until.split(':');
@@ -262,7 +214,7 @@ export class CreateEventComponent implements OnInit {
       console.log(start_time);
 
 
-      let event  = {
+      let event = {
         user_id: this.SidebarService.getUserId(),
         name: formData.name,
         priority: formData.priority,
@@ -280,12 +232,12 @@ export class CreateEventComponent implements OnInit {
         description: formData.description,
         alarms: formData.alarms
       }
-      let res =  this.createEventService.createEvent(event);
+      let res = this.createEventService.createEvent(event);
       res.subscribe((data) => {
         this.router.navigate(['/my-calendar']);
       })
     } else {
       console.log('Form is invalid. Please correct the errors.');
     }
-      }
+  }
 }
