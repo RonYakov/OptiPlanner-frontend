@@ -4,7 +4,7 @@ import { CreateEventService } from '../../shared/services/create-event.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
 import { Category } from "../../shared/enum/event-category.enum";
 import { Router } from '@angular/router';
-
+import { timeRangeValidator } from '../../shared/classes/time-range.validator';
 
 @Component({
   selector: 'app-create-event',
@@ -37,20 +37,11 @@ export class CreateEventComponent implements OnInit {
       name: ['', Validators.required],
       priority: ['', Validators.required],
       flexibility: ['', Validators.required],
-      // dateRange: this.fb.group({
-      //   from: [''],
-      //   until: ['']
-      // }),
-      // timeRange: this.fb.group({
-      //   from: [''],
-      //   until: [''],
-      //   totalTimeNeeded: ['']
-      // }),
       start_date: [''],
       setTime: this.fb.group({
         from: [''],
         until: ['']
-      }),
+      }, { validators: timeRangeValidator }),
       whole_day: [false],
       repeat: [false],
       repeatOptions: this.fb.group({
@@ -100,47 +91,18 @@ export class CreateEventComponent implements OnInit {
     const form = this.eventForm;
 
     form.get('flexibility')?.valueChanges.subscribe(value => {
-      const dateRangeGroup = form.get('dateRange') as FormGroup | null;
-      const timeRangeGroup = form.get('timeRange') as FormGroup | null;
-      const setDateGroup = form.get('setDate') as FormGroup | null;
       const setTimeGroup = form.get('setTime') as FormGroup | null;
 
       if (value === 'yes') {
-        if (dateRangeGroup && timeRangeGroup) {
-          dateRangeGroup.get('from')?.setValidators(Validators.required);
-          dateRangeGroup.get('until')?.setValidators(Validators.required);
-          timeRangeGroup.get('from')?.setValidators(Validators.required);
-          timeRangeGroup.get('until')?.setValidators(Validators.required);
-          timeRangeGroup.get('totalTimeNeeded')?.setValidators(Validators.required);
-
-          setDateGroup?.get('date')?.clearValidators();
-          setTimeGroup?.get('from')?.clearValidators();
-          setTimeGroup?.get('until')?.clearValidators();
-        }
+        setTimeGroup?.get('from')?.clearValidators();
+        setTimeGroup?.get('until')?.clearValidators();
       } else if (value === 'no') {
-        if (setDateGroup && setTimeGroup) {
-          setDateGroup.get('date')?.setValidators(Validators.required);
-          setTimeGroup.get('from')?.setValidators(Validators.required);
-          setTimeGroup.get('until')?.setValidators(Validators.required);
-
-          dateRangeGroup?.get('from')?.clearValidators();
-          dateRangeGroup?.get('until')?.clearValidators();
-          timeRangeGroup?.get('from')?.clearValidators();
-          timeRangeGroup?.get('until')?.clearValidators();
-          timeRangeGroup?.get('totalTimeNeeded')?.clearValidators();
-        }
+        setTimeGroup?.get('from')?.setValidators(Validators.required);
+        setTimeGroup?.get('until')?.setValidators(Validators.required);
       }
 
-      if (dateRangeGroup && timeRangeGroup && setDateGroup && setTimeGroup) {
-        dateRangeGroup.get('from')?.updateValueAndValidity();
-        dateRangeGroup.get('until')?.updateValueAndValidity();
-        timeRangeGroup.get('from')?.updateValueAndValidity();
-        timeRangeGroup.get('until')?.updateValueAndValidity();
-        timeRangeGroup.get('totalTimeNeeded')?.updateValueAndValidity();
-        setDateGroup.get('date')?.updateValueAndValidity();
-        setTimeGroup.get('from')?.updateValueAndValidity();
-        setTimeGroup.get('until')?.updateValueAndValidity();
-      }
+      setTimeGroup?.get('from')?.updateValueAndValidity();
+      setTimeGroup?.get('until')?.updateValueAndValidity();
     });
 
     form.get('whole_day')?.valueChanges.subscribe(value => {
@@ -150,6 +112,8 @@ export class CreateEventComponent implements OnInit {
         if (value) {
           setTimeGroup.get('from')?.clearValidators();
           setTimeGroup.get('until')?.clearValidators();
+          setTimeGroup.get('from')?.setValue(''); // Clear the time values
+          setTimeGroup.get('until')?.setValue('');
         } else {
           setTimeGroup.get('from')?.setValidators(Validators.required);
           setTimeGroup.get('until')?.setValidators(Validators.required);
@@ -160,7 +124,6 @@ export class CreateEventComponent implements OnInit {
       }
     });
   }
-
 
   lightenDarkenColor(col: string, amt: number): string {
     let usePound = false;
@@ -204,15 +167,21 @@ export class CreateEventComponent implements OnInit {
 
       let start_date = new Date(formData.start_date);
 
-      let startTimeString = formData.setTime.from.split(':');
-      let endTimeString = formData.setTime.until.split(':');
+      let start_time, end_time;
 
-      let start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
-      let end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
+      if (formData.whole_day) {
+        // Set default start time to 00:00 and end time to 23:59
+        start_time = new Date(start_date.setHours(0, 0));
+        end_time = new Date(start_date.setHours(23, 59));
+      } else {
+        let startTimeString = formData.setTime.from.split(':');
+        let endTimeString = formData.setTime.until.split(':');
 
+        start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
+        end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
+      }
 
       console.log(start_time);
-
 
       let event = {
         user_id: this.SidebarService.getUserId(),
