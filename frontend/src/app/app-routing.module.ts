@@ -1,20 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {AuthPageComponent} from "./auth/auth-page/auth-page.component";
 import { CalendarComponent } from './components/calendar/calendar.component';
-import {CreateEventComponent} from "./components/create-event/create-event.component";
+import { CreateEventComponent } from "./components/create-event/create-event.component";
+import { AboutComponent } from "./components/about/about.component";
 
 const routes: Routes = [
   {
     path:'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
-  {
-    path: 'my-calendar', component: CalendarComponent
-  },
-  {
-    path: 'create-event', component: CreateEventComponent
-  },
+  { path: 'my-calendar', component: CalendarComponent },
+  { path: 'create-event', component: CreateEventComponent },
+  { path: 'about', component: AboutComponent },
 ];
 
 @NgModule({
