@@ -71,11 +71,14 @@
         <input type="checkbox" id="whole-day-no" formControlName="whole_day">
         <label for="whole-day-no" class="checkbox-label">Whole day</label>
         <div *ngIf="!eventForm.get('whole_day')?.value" formGroupName="setTime">
-          <div class="inline-group" *ngIf="eventForm.get('whole_day')?.value !== null && !eventForm.get('whole_day')?.value">
+          <div class="inline-group" *ngIf="!eventForm.get('whole_day')?.value">
             <label for="time-from">From:</label>
             <input type="time" id="time-from" formControlName="from" required>
             <label for="time-until">Until:</label>
             <input type="time" id="time-until" formControlName="until" required>
+          </div>
+          <div *ngIf="eventForm.get('setTime')?.errors?.['timeRangeInvalid']">
+            Invalid time range.
           </div>
         </div>
       </div>

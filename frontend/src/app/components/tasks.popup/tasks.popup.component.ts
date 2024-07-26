@@ -154,8 +154,11 @@ export class TasksPopupComponent implements OnInit, OnChanges {
   }
 
   identifyOverlappingTasks(tasks: Task[]): Task[][] {
+    // Filter out whole day tasks
+    const filteredTasks = tasks.filter(task => !this.isWholeDayTask(task));
+
     // Sort tasks by start time
-    const sortedTasks = tasks.sort((a, b) => this.timeToMinutes(a.getStartTime()) - this.timeToMinutes(b.getStartTime()));
+    const sortedTasks = filteredTasks.sort((a, b) => this.timeToMinutes(a.getStartTime()) - this.timeToMinutes(b.getStartTime()));
 
     const overlappingTasks = [];
     let currentOverlapGroup = [sortedTasks[0]];
@@ -201,6 +204,10 @@ export class TasksPopupComponent implements OnInit, OnChanges {
 
   selectTask(task: Task) {
     this.selectedTask = task;
+  }
+
+  isWholeDayTask(task: Task): boolean {
+    return task.whole_day;
   }
 
   closeTaskDetail() {
