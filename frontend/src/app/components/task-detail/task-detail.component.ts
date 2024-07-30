@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Task } from '../../shared/classes/task';
+import { CalendarService } from '../../shared/services/calendar.service'
 
 @Component({
   selector: 'app-task-detail',
@@ -10,7 +11,7 @@ export class TaskDetailComponent implements OnInit {
   @Input() task!: Task;
   @Output() close = new EventEmitter<void>();
 
-  constructor() { }
+  constructor(private calendarService: CalendarService) { }
 
   ngOnInit(): void { }
 
@@ -27,6 +28,14 @@ export class TaskDetailComponent implements OnInit {
   }
 
   onDelete() {
-    //todo after Ido add the id to the task
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      this.calendarService.deleteEvent(this.task.id).subscribe(res => {
+        if (res.status === 200) {
+          window.location.reload();
+        } else {
+          console.error(res.data);
+        }
+      });
+    }
   }
 }

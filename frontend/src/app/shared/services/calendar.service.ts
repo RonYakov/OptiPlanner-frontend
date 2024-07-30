@@ -11,15 +11,13 @@ export class CalendarService {
 
   constructor(private http: HttpClient) {}
 
-
-
-
   getUserEvents(userid: string): Observable<Task[]> {
     return this.http.get(environment.API_URL + `/calendar/getUserEvents`, { params: { userid }, observe: 'response' })
       .pipe(
         map((res: HttpResponse<any>) => {
           if (res.body.status === 200) {
             return res.body.data.map((task: Partial<Task>) => new Task(
+              task.id || '',
               task.user_id || '',
               task.name || '',
               task.priority || 0,
@@ -42,6 +40,15 @@ export class CalendarService {
             console.error(`Received status code ${res.status}`);
             return [];
           }
+        })
+      );
+  }
+
+  deleteEvent(eventId: string): Observable<any> {
+    return this.http.delete(environment.API_URL + `/calendar/deleteEvent`, { params: { eventId }, observe: 'response' })
+      .pipe(
+        map((res: HttpResponse<any>) => {
+          return res;
         })
       );
   }

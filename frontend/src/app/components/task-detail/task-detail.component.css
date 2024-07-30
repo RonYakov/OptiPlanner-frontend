@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
 .popup {
   position: fixed;
   top: 0;
@@ -7,137 +9,147 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .popup-content {
-  background-color: #e0e8f0;
-  width: 90%;
-  max-width: 450px;
-  padding: 30px;
+  position: relative;
+  background-color: #ffffff;
+  width: 85%;
+  max-width: 320px;
+  padding: 20px;
   border-radius: 16px;
-  max-height: 80vh;
+  max-height: 75vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
 }
 
 .task-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #2c3e50;
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 25px;
   text-align: center;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 5px 0;
+  position: relative;
+}
+
+.task-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
 }
 
 .task-section {
-  margin-bottom: 15px;
-  background-color: #f7f9fc;
+  margin-bottom: 12px;
+  background-color: #f8fafc;
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
 }
 
 .task-section:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .task-section-title {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
-  color: #34495e;
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .task-section-content {
-  font-size: 15px;
-  color: #2c3e50;
+  font-size: 13px;
+  color: #334155;
   line-height: 1.4;
-}
-
-.task-alarms {
-  list-style-type: none;
-  padding: 0;
-  margin: 8px 0;
-}
-
-.task-alarms li {
-  font-size: 14px;
-  color: #34495e;
-  margin: 5px 0;
-  padding: 8px 12px;
-  background-color: #e9f0f6;
-  border-radius: 6px;
-  border-left: 3px solid #3498db;
 }
 
 .button-container {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: flex-end;
+  margin-top: 15px;
 }
 
 .close-task-button, .delete-task-button {
   color: white;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
-  flex: 1;
-  margin: 0 5px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .close-task-button {
-  background-color: #3498db;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  color: #64748b;
+  padding: 6px;
+  border: 1px solid #64748b;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .close-task-button:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #64748b;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.close-task-button::before {
+  content: "×";
 }
 
 .delete-task-button {
-  background-color: #e74c3c;
+  background-color: #ef4444;
 }
 
 .delete-task-button:hover {
-  background-color: #c0392b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #dc2626;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .popup-content {
-    width: 95%;
-    padding: 20px;
-  }
-
-  .task-title {
-    font-size: 22px;
+    width: 90%;
+    padding: 18px;
   }
 
   .task-section-title {
-    font-size: 13px;
+    font-size: 10px;
   }
 
   .task-section-content {
-    font-size: 14px;
-  }
-
-  .button-container {
-    flex-direction: column;
-    margin-top: 10px;
-  }
-
-  .close-task-button, .delete-task-button {
-    margin: 5px 0;
+    font-size: 12px;
   }
 }
