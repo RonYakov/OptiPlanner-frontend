@@ -16,6 +16,10 @@ export class CreateEventService {
     return this.http.post<any>( environment.API_URL + '/events/create-absolute-event', {...eventData}).pipe(map((res: any) => res))
 }
 
+editEvent(eventData:any) {
+  return this.http.post<any>( environment.API_URL + '/events/edit-absolute-event', {...eventData}).pipe(map((res: any) => res))
+}
+
   private handleError(error: any): Observable<never> {
     console.error('An error occurred:', error);
     throw error;

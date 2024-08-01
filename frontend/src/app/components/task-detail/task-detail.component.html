@@ -1,15 +1,13 @@
 <div class="popup">
   <div class="popup-content">
+    <button class="close-task-button" (click)="onClose()"></button>
     <h2 class="task-title">{{ task.name }}</h2>
 
     <div class="task-section">
-      <div class="task-section-title">Priority</div>
-      <div class="task-section-content">{{ task.priority }}</div>
-    </div>
-
-    <div class="task-section">
-      <div class="task-section-title">Flexibility</div>
-      <div class="task-section-content">{{ task.flexible ? 'Flexible' : 'Not Flexible' }}</div>
+      <div class="task-section-title">Priority & Flexibility</div>
+      <div class="task-section-content">
+        {{ task.priority }} | {{ task.flexible ? 'Flexible' : 'Not Flexible' }}
+      </div>
     </div>
 
     <div class="task-section">
@@ -20,15 +18,11 @@
       </div>
     </div>
 
-    <div *ngIf="task.whole_day" class="task-section">
-      <div class="task-section-title">Duration</div>
-      <div class="task-section-content">Whole day event</div>
-    </div>
-
-    <div *ngIf="task.repeat" class="task-section">
-      <div class="task-section-title">Repetition</div>
+    <div *ngIf="task.whole_day || task.repeat" class="task-section">
+      <div class="task-section-title">Duration & Repetition</div>
       <div class="task-section-content">
-        Repeats every {{ task.repeat_interval }} {{ task.repeat_type === 1 ? 'day(s)' : task.repeat_type === 2 ? 'week(s)' : 'month(s)' }}
+        {{ task.whole_day ? 'Whole day event' : '' }}
+        {{ task.repeat ? 'Repeats for ' + task.repeat_interval + ' ' + (task.repeat_type === 1 ? 'day(s)' : task.repeat_type === 2 ? 'week(s)' : 'month(s)') : '' }}
       </div>
     </div>
 
@@ -43,7 +37,7 @@
     </div>
 
     <div class="button-container">
-      <button class="close-task-button" (click)="onClose()">Close</button>
+      <button class="edit-task-button" (click)="onEdit()">Edit</button>
       <button class="delete-task-button" (click)="onDelete()">Delete</button>
     </div>
   </div>

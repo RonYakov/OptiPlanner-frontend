@@ -239,38 +239,33 @@
 }
 
 
-.close-button:hover {
-  background-color: #365A54; /* Even darker shade on hover */
-}
-
-.close-button {
-  position: absolute;
-  bottom: 20px; /* Position it 20px from the bottom */
-  left: 50%;
-  transform: translateX(-50%); /* Center it horizontally */
-  width: 30%; /* Set a width if needed */
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4B7F72; /* Darker shade of base color */
-  color: white;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
 .close-task-button {
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   right: 10px;
-  background-color: #4B7F72;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 3px;
+  background-color: transparent;
+  color: #64748b;
+  padding: 6px;
+  border: 1px solid #64748b;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  width: 33px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .close-task-button:hover {
-  background-color: #365A54;
+  background-color: #64748b;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.close-task-button::before {
+  content: "×";
 }

@@ -2,6 +2,7 @@ import { EventAlarm } from './eventAlarm';
 
 export class Task {
   constructor(
+    public id: string,
     public user_id: string,
     public name: string,
     public priority: number,

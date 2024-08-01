@@ -154,29 +154,37 @@ export class TasksPopupComponent implements OnInit, OnChanges {
   }
 
   identifyOverlappingTasks(tasks: Task[]): Task[][] {
-    // Filter out whole day tasks
     const filteredTasks = tasks.filter(task => !this.isWholeDayTask(task));
 
-    // Sort tasks by start time
-    const sortedTasks = filteredTasks.sort((a, b) => this.timeToMinutes(a.getStartTime()) - this.timeToMinutes(b.getStartTime()));
+    const sortedTasks = filteredTasks.sort((a, b) =>
+      this.timeToMinutes(a.getStartTime()) - this.timeToMinutes(b.getStartTime())
+    );
 
-    const overlappingTasks = [];
-    let currentOverlapGroup = [sortedTasks[0]];
+    const overlappingTasks: Task[][] = [];
+    let currentOverlapGroup: Task[] = [];
+    let latestEndTime = 0;
 
-    for (let i = 1; i < sortedTasks.length; i++) {
-      const currentTask = sortedTasks[i];
-      const lastTaskInGroup = currentOverlapGroup[currentOverlapGroup.length - 1];
+    for (const task of sortedTasks) {
+      const taskStartTime = this.timeToMinutes(task.getStartTime());
+      const taskEndTime = this.timeToMinutes(task.getEndTime());
 
-      // If the current task starts before the last task in the group ends, they are overlapping
-      if (this.timeToMinutes(currentTask.getStartTime()) < this.timeToMinutes(lastTaskInGroup.getEndTime())) {
-        currentOverlapGroup.push(currentTask);
+      if (currentOverlapGroup.length === 0 || taskStartTime >= latestEndTime) {
+        // Start a new group if this is the first task or if it doesn't overlap
+        if (currentOverlapGroup.length > 0) {
+          overlappingTasks.push(currentOverlapGroup);
+        }
+        currentOverlapGroup = [task];
+        latestEndTime = taskEndTime;
       } else {
-        overlappingTasks.push(currentOverlapGroup);
-        currentOverlapGroup = [currentTask];
+        // Add to the current group if there's an overlap
+        currentOverlapGroup.push(task);
+        latestEndTime = Math.max(latestEndTime, taskEndTime);
       }
     }
 
-    overlappingTasks.push(currentOverlapGroup);
+    if (currentOverlapGroup.length > 0) {
+      overlappingTasks.push(currentOverlapGroup);
+    }
 
     return overlappingTasks;
   }
@@ -185,14 +193,16 @@ export class TasksPopupComponent implements OnInit, OnChanges {
     const overlappingGroup = this.identifyOverlappingTasks(tasks).find(group => group.includes(task));
 
     if (!overlappingGroup) {
-      return { width: 'calc(70% - 80px)', left: '80px' }; // Adjust the left value as needed
+      return { width: 'calc(95% - 80px)', left: '80px' };
     }
 
     const numTasks = overlappingGroup.length;
-    const remainingWidth = `calc(95% - 80px)`;
-    const width = `calc(${remainingWidth} / ${numTasks + numTasks*0.5})`;
+    const remainingWidth = 'calc(95% - 80px)';
     const taskIndex = overlappingGroup.indexOf(task);
-    const left = `calc(80px + (${taskIndex} * (${remainingWidth} / ${numTasks})))`;
+
+    const spacing = '10px';
+    const width = `calc((${remainingWidth} / ${numTasks}) - ${spacing})`;
+    const left = `calc(80px + (${taskIndex} * (${remainingWidth} / ${numTasks})) + (${taskIndex} * ${spacing}))`;
 
     return { width, left };
   }

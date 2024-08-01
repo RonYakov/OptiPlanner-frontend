@@ -1,169 +1,255 @@
-<div class="container">
-  <div class="create-event-container">
-  <h1>Create an Event</h1>
-  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <div class="inline-group">
-        <label for="name">Name of the event:</label>
-        <input formControlName="name" type="text" id="name" required>
-      </div>
-    </div>
+<div [class.modal-overlay]="isModal">
+  <div [class.modal-content]="isModal">
+    <div class="main-container" [class.modal-open]="isModal">
+      <div class="content" [class.modal-open]="isModal">
+        <div class="container">
+          <div class="create-event-container">
+            <div *ngIf="isModal" class="modal-header">
+              <h1>Edit Event</h1>
+              <button class="modal-close" (click)="closeModal()">&times;</button>
+            </div>
+            <div [class.modal-body]="isModal">
+              <h1 *ngIf="!isModal">Create an Event</h1>
+              <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label for="name">Name of the event:</label>
+                    <input formControlName="name" type="text" id="name" required class="form-control">
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('name')!.invalid && eventForm.get('name')!.touched">
+              Please enter a valid event name.
+            </span>
+                </div>
 
-    <div class="form-group">
-      <div class="inline-group">
-        <label for="priority">Priority:</label>
-        <div id="priority" class="priority-container"></div>
-        <input type="hidden" formControlName="priority" id="priority-value" required>
-      </div>
-    </div>
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label for="priority">Priority:</label>
+                    <div id="priority" class="priority-container"></div>
+                    <input type="hidden" formControlName="priority" id="priority-value" required>
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('priority')!.invalid && eventForm.get('priority')!.touched">
+                    Please select a priority.
+                  </span>
+                </div>
 
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label>Flexibility:</label>
+                    <div class="radio-group">
+                      <div *ngFor="let option of flexibilityOptions">
+                        <input type="radio" [id]="'flexibility-' + option.value" [value]="option.value" formControlName="flexibility" required>
+                        <label [for]="'flexibility-' + option.value" class="radio-label">{{ option.label }}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('flexibility')!.invalid && eventForm.get('flexibility')!.touched">
+              Please select a flexibility option.
+            </span>
+                </div>
 
-    <!-- Flexibility Section -->
-    <div class="form-group">
-      <div class="inline-group">
-        <label>Flexibility:</label>
-        <div *ngFor="let option of flexibilityOptions">
-          <input type="radio" [id]="'flexibility-' + option.value" [value]="option.value" formControlName="flexibility" required>
-          <label [for]="'flexibility-' + option.value" class="radio-label">{{ option.label }}</label>
+                <div *ngIf="eventForm.get('flexibility')?.value === 'no'">
+                  <div class="form-group">
+                    <div class="inline-group">
+                      <label for="set-date">Set date:</label>
+                      <input type="date" id="set-date" formControlName="start_date" required class="form-control">
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('start_date')!.invalid && eventForm.get('start_date')!.touched">
+                Please select a valid date.
+              </span>
+                  </div>
+                  <div class="form-group">
+                    <div class="inline-group">
+                      <label for="whole-day-no">Set time:</label>
+                      <div class="checkbox-group">
+                        <input type="checkbox" id="whole-day-no" formControlName="whole_day">
+                        <label for="whole-day-no" class="checkbox-label">Whole day</label>
+                      </div>
+                    </div>
+                    <div *ngIf="!eventForm.get('whole_day')?.value" formGroupName="setTime">
+                      <div class="date-time-container">
+                        <div class="date-time-group">
+                          <label for="time-from">From:</label>
+                          <input type="time" id="time-from" formControlName="from" required class="form-control">
+                        </div>
+                        <div class="date-time-group">
+                          <label for="time-until">Until:</label>
+                          <input type="time" id="time-until" formControlName="until" required class="form-control">
+                        </div>
+                      </div>
+                      <span class="error-message" *ngIf="eventForm.get('setTime')?.errors?.['timeRangeInvalid']">
+                  Invalid time range.
+                </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="inline-group">
+                      <label for="repeat">Repeat:</label>
+                      <div class="checkbox-group">
+                        <input type="checkbox" id="repeat" formControlName="repeat">
+                        <label for="repeat" class="checkbox-label">Repeat</label>
+                      </div>
+                    </div>
+                    <div *ngIf="eventForm.get('repeat')?.value" formGroupName="repeatOptions">
+                      <div class="inline-group padding-class">
+                        <label for="frequency">Frequency:</label>
+                        <select id="frequency" formControlName="frequency" required class="form-control">
+                          <option *ngFor="let option of frequencyOptions" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                      </div>
+                      <span class="error-message" *ngIf="eventForm.get('repeatOptions.frequency')!.invalid && eventForm.get('repeatOptions.frequency')!.touched">
+                  Please select a frequency.
+                </span>
+                      <div class="inline-group">
+                        <label for="times">Times:</label>
+                        <input type="number" id="times" formControlName="times" required class="form-control">
+                      </div>
+                      <span class="error-message" *ngIf="eventForm.get('repeatOptions.times')!.invalid && eventForm.get('repeatOptions.times')!.touched">
+                  Please enter a valid number of times.
+                </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="eventForm.get('flexibility')?.value === 'yes'">
+                  <div class="form-group">
+                    <div class="inline-group">
+                      <label for="default-date">Default Date:</label>
+                      <input type="date" id="default-date" formControlName="default_date" class="form-control">
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('default_date')!.invalid && eventForm.get('default_date')!.touched">
+                Please select a valid default date.
+              </span>
+                  </div>
+
+                  <div class="form-group" *ngIf="eventForm.get('default_date')?.value">
+                    <div formGroupName="date_range" class="date-time-container">
+                      <div class="date-time-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" formControlName="start" class="form-control">
+                      </div>
+                      <div class="date-time-group">
+                        <label for="end-date">End Date:</label>
+                        <input type="date" id="end-date" formControlName="end" class="form-control">
+                      </div>
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('date_range')?.errors?.['dateOutOfRange']">
+                Default date is not within the date range.
+              </span>
+                    <span class="error-message" *ngIf="eventForm.get('date_range')?.errors?.['startDateAfterEndDate']">
+                Start date cannot be after end date.
+              </span>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="date-time-container">
+                      <div class="date-time-group">
+                        <label for="start-time">Start Time:</label>
+                        <input type="time" id="start-time" formControlName="start_time" class="form-control">
+                      </div>
+                      <div class="date-time-group">
+                        <label for="end-time">End Time:</label>
+                        <input type="time" id="end-time" formControlName="end_time" class="form-control">
+                      </div>
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['startTimeAfterEndTime']">
+                Start time cannot be after end time.
+              </span>
+                  </div>
+
+                  <div class="form-group" *ngIf="eventForm.get('start_time')?.value && eventForm.get('end_time')?.value">
+                    <div formGroupName="time_range" class="date-time-container">
+                      <div class="date-time-group">
+                        <label for="start-range">Start Range:</label>
+                        <input type="time" id="start-range" formControlName="start" class="form-control">
+                      </div>
+                      <div class="date-time-group">
+                        <label for="end-range">End Range:</label>
+                        <input type="time" id="end-range" formControlName="end" class="form-control">
+                      </div>
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['timeRangeExceeded']">
+                The difference between start time and end time is greater than the time range.
+              </span>
+                    <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['startRangeAfterEndRange']">
+                Start range cannot be after end range.
+              </span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" formControlName="location" required class="form-control">
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('location')!.invalid && eventForm.get('location')!.touched">
+              Please enter a valid location.
+            </span>
+                </div>
+
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label for="category">Category:</label>
+                    <select id="category" formControlName="category" required class="form-control">
+                      <option value="" disabled selected>Please choose a category</option>
+                      <option value="WORK">Work</option>
+                      <option value="PERSONAL">Personal</option>
+                      <option value="FAMILY">Family</option>
+                      <option value="HEALTH">Health</option>
+                      <option value="EDUCATION">Education</option>
+                      <option value="FINANCE">Finance</option>
+                      <option value="SOCIAL">Social</option>
+                      <option value="TRAVEL">Travel</option>
+                      <option value="ENTERTAINMENT">Entertainment</option>
+                      <option value="SPORTS">Sports</option>
+                      <option value="MEETING">Meeting</option>
+                      <option value="HOLIDAY">Holiday</option>
+                      <option value="APPOINTMENT">Appointment</option>
+                      <option value="REMINDER">Reminder</option>
+                      <option value="SHOPPING">Shopping</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('category')!.invalid && eventForm.get('category')!.touched">
+              Please select a category.
+            </span>
+                </div>
+
+                <div class="form-group">
+                  <div class="inline-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" formControlName="description" required class="form-control"></textarea>
+                  </div>
+                  <span class="error-message" *ngIf="eventForm.get('description')!.invalid && eventForm.get('description')!.touched">
+              Please enter a description.
+            </span>
+                </div>
+
+                <div class="form-group">
+                  <div class="inline-group">
+                    <div formArrayName="alarms">
+                      <button id="add-alarm" type="button" (click)="addAlarm()">Add Alarm</button>
+                      <div *ngFor="let alarm of alarms.controls; let i = index" [formGroupName]="i" class="alarm-group">
+                        <label for="time-{{i}}" class="alarm-label">Time:</label>
+                        <input type="text" id="time-{{i}}" formControlName="time" class="form-control alarm-input">
+                        <label for="unit-{{i}}" class="alarm-label">Unit:</label>
+                        <select id="unit-{{i}}" formControlName="unit" class="form-control alarm-input">
+                          <option *ngFor="let unit of alarmUnits" [value]="unit">{{ unit }}</option>
+                        </select>
+                        <button id="remove-alarm" type="button" (click)="removeAlarm(i)" class="remove-alarm">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid">Create Event</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
+
+
     </div>
-
-<!--    &lt;!&ndash; Flexibility: Yes &ndash;&gt;-->
-<!--    <div [style.display]="eventForm.get('flexibility')?.value === 'yes' ? 'block' : 'none'" class="flexibility-options">-->
-<!--      <div class="form-group" formGroupName="dateRange">-->
-<!--        <div class="inline-group">-->
-<!--          <label for="date-range-from">Set date (range): From:</label>-->
-<!--          <input type="date" id="date-range-from" formControlName="from" required>-->
-<!--          <label for="date-range-until">Until:</label>-->
-<!--          <input type="date" id="date-range-until" formControlName="until" required>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="form-group">-->
-<!--        <label for="whole-day-yes">Set time (range):</label>-->
-<!--        <input type="checkbox" id="whole-day-yes" formControlName="wholeDay">-->
-<!--        <label for="whole-day-yes" class="checkbox-label">Whole day</label>-->
-<!--        <div *ngIf="!eventForm.get('wholeDay')?.value" formGroupName="timeRange">-->
-<!--          <div class="inline-group">-->
-<!--            <label for="time-range-from">From:</label>-->
-<!--            <input type="time" id="time-range-from" formControlName="from" required>-->
-<!--            <label for="time-range-until">Until:</label>-->
-<!--            <input type="time" id="time-range-until" formControlName="until" required>-->
-<!--            <div class="inline-group">-->
-<!--              <label for="total-time-needed">Total time needed:</label>-->
-<!--              <input type="time" id="total-time-needed" formControlName="totalTimeNeeded" required>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-    <!-- Flexibility: No -->
-    <div *ngIf="eventForm.get('flexibility')?.value === 'no'">
-      <div class="form-group">
-        <div class="inline-group">
-          <label for="set-date">Set date:</label>
-          <input type="date" id="set-date" formControlName="start_date" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="whole-day-no">Set time:</label>
-        <input type="checkbox" id="whole-day-no" formControlName="whole_day">
-        <label for="whole-day-no" class="checkbox-label">Whole day</label>
-        <div *ngIf="!eventForm.get('whole_day')?.value" formGroupName="setTime">
-          <div class="inline-group" *ngIf="!eventForm.get('whole_day')?.value">
-            <label for="time-from">From:</label>
-            <input type="time" id="time-from" formControlName="from" required>
-            <label for="time-until">Until:</label>
-            <input type="time" id="time-until" formControlName="until" required>
-          </div>
-          <div *ngIf="eventForm.get('setTime')?.errors?.['timeRangeInvalid']">
-            Invalid time range.
-          </div>
-        </div>
-      </div>
-
-      <!-- Repeat Section -->
-      <div class="form-group">
-        <label for="repeat">Repeat:</label>
-        <input type="checkbox" id="repeat" formControlName="repeat">
-        <label for="repeat" class="checkbox-label">Repeat</label>
-        <div *ngIf="eventForm.get('repeat')?.value" formGroupName="repeatOptions">
-          <div class="inline-group">
-            <label for="frequency">Frequency:</label>
-            <select id="frequency" formControlName="frequency" required>
-              <option *ngFor="let option of frequencyOptions" [value]="option.value">{{ option.label }}</option>
-            </select>
-          </div>
-          <div class="inline-group">
-            <input type="checkbox" id="repeat-always" formControlName="always">
-            <label for="repeat-always" class="checkbox-label">Always</label>
-          </div>
-          <div class="inline-group" *ngIf="!eventForm.get('repeatOptions.always')?.value">
-            <label for="times">Times:</label>
-            <input type="number" id="times" formControlName="times" required>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="inline-group">
-        <label for="location">Location:</label>
-        <input type="text" id="location" formControlName="location" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="inline-group">
-        <label for="category">Category:</label>
-        <select id="category" formControlName="category" required>
-          <option value="" disabled selected>Please choose a category</option>
-          <option value="WORK">Work</option>
-          <option value="PERSONAL">Personal</option>
-          <option value="FAMILY">Family</option>
-          <option value="HEALTH">Health</option>
-          <option value="EDUCATION">Education</option>
-          <option value="FINANCE">Finance</option>
-          <option value="SOCIAL">Social</option>
-          <option value="TRAVEL">Travel</option>
-          <option value="ENTERTAINMENT">Entertainment</option>
-          <option value="SPORTS">Sports</option>
-          <option value="MEETING">Meeting</option>
-          <option value="HOLIDAY">Holiday</option>
-          <option value="APPOINTMENT">Appointment</option>
-          <option value="REMINDER">Reminder</option>
-          <option value="SHOPPING">Shopping</option>
-          <option value="OTHER">Other</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="inline-group">
-        <label for="description">Description:</label>
-        <textarea id="description" formControlName="description" required></textarea>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="inline-group">
-        <div formArrayName="alarms">
-          <button id="add-alarm" type="button" (click)="addAlarm()">Add Alarm</button>
-          <div *ngFor="let alarm of alarms.controls; let i = index" [formGroupName]="i" class="alarm-group">
-            <label for="time-{{i}}" class="alarm-label">Time:</label>
-            <input type="text" id="time-{{i}}" formControlName="time" class="alarm-input">
-            <label for="unit-{{i}}" class="alarm-label">Unit:</label>
-            <select id="unit-{{i}}" formControlName="unit" class="alarm-input">
-              <option *ngFor="let unit of alarmUnits" [value]="unit">{{ unit }}</option>
-            </select>
-            <button id="remove-alarm" type="button" (click)="removeAlarm(i)" class="remove-alarm">Remove</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid">Create Event</button>
-  </form>
   </div>
 </div>

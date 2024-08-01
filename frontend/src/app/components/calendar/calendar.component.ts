@@ -230,7 +230,7 @@ export class CalendarComponent implements OnInit {
               break;
             case 3: // MONTHLY
               let monthsDifference = (date.getFullYear() - taskStartDate.getFullYear()) * 12 + date.getMonth() - taskStartDate.getMonth();
-              if (monthsDifference >= 0 && monthsDifference < repeatInterval && taskStartDate.getDate() === date.getDate()) {
+              if (monthsDifference >= 0 && monthsDifference <= repeatInterval && taskStartDate.getDate() === date.getDate()) {
                 return true;
               }
               break;
