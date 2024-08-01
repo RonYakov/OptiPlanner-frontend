@@ -130,6 +130,34 @@
   content: "×";
 }
 
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.edit-task-button, .delete-task-button {
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+
+.edit-task-button {
+  background-color: #3b82f6;
+}
+
+.edit-task-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+}
+
 .delete-task-button {
   background-color: #ef4444;
 }

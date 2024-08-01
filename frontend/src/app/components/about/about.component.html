@@ -1,4 +1,4 @@
-<div class="responsive-container-block bigContainer">
+<div class="responsive-container-block bigContainer" [ngClass]="{'sidebar-open': isSideBarOpen}">
   <div class="responsive-container-block Container">
     <div class="imgContainer">
       <img class="mainImg" src="https://images.unsplash.com/photo-1484981184820-2e84ea0af397?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Calendar and Time Management">
@@ -10,19 +10,34 @@
       </p>
       <div class="team-members">
         <div class="team-member">
-          <h3 class="text-blk memberName">John Doe</h3>
-          <p class="text-blk memberRole">Web Developer</p>
-          <p class="text-blk memberBio">John brings 10+ years of web development experience, specializing in creating intuitive and efficient user interfaces.</p>
+          <div class="member-avatar">
+            <img src="path_to_john_image.jpg" alt="John Doe">
+          </div>
+          <div class="member-info">
+            <h3 class="memberName">John Doe</h3>
+            <p class="memberRole">Web Developer</p>
+            <p class="memberBio">John brings 10+ years of web development experience, specializing in creating intuitive and efficient user interfaces.</p>
+          </div>
         </div>
         <div class="team-member">
-          <h3 class="text-blk memberName">Jane Smith</h3>
-          <p class="text-blk memberRole">UX Designer</p>
-          <p class="text-blk memberBio">With a keen eye for detail, Jane ensures our products are not just functional, but also a joy to use.</p>
+          <div class="member-avatar">
+            <img src="path_to_jane_image.jpg" alt="Jane Smith">
+          </div>
+          <div class="member-info">
+            <h3 class="memberName">Jane Smith</h3>
+            <p class="memberRole">UX Designer</p>
+            <p class="memberBio">With a keen eye for detail, Jane ensures our products are not just functional, but also a joy to use.</p>
+          </div>
         </div>
         <div class="team-member">
-          <h3 class="text-blk memberName">Mike Johnson</h3>
-          <p class="text-blk memberRole">Content Strategist</p>
-          <p class="text-blk memberBio">Mike crafts compelling narratives that help our users understand and maximize the benefits of effective time management.</p>
+          <div class="member-avatar">
+            <img src="path_to_mike_image.jpg" alt="Mike Johnson">
+          </div>
+          <div class="member-info">
+            <h3 class="memberName">Mike Johnson</h3>
+            <p class="memberRole">Content Strategist</p>
+            <p class="memberBio">Mike crafts compelling narratives that help our users understand and maximize the benefits of effective time management.</p>
+          </div>
         </div>
       </div>
       <a href="#" class="cta-button">Learn More About Our Mission</a>

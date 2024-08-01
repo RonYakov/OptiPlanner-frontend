@@ -1,10 +1,11 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, Optional } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, FormControl} from '@angular/forms';
 import { CreateEventService } from '../../shared/services/create-event.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
 import { Category } from "../../shared/enum/event-category.enum";
 import { Router } from '@angular/router';
 import { timeRangeValidator } from '../../shared/classes/time-range.validator';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-create-event',
@@ -12,7 +13,9 @@ import { timeRangeValidator } from '../../shared/classes/time-range.validator';
   styleUrls: ['./create-event.component.css']
 })
 export class CreateEventComponent implements OnInit {
-  eventForm: FormGroup;
+  task: any;
+  isModal: boolean = false;
+  eventForm: FormGroup = this.fb.group({});
   priorityLevels = Array.from({length: 7}, (_, i) => i + 1).reverse();
   flexibilityOptions = [
     {value: 'yes', label: 'Yes'},
@@ -25,14 +28,28 @@ export class CreateEventComponent implements OnInit {
   ];
   alarmUnits = ['Month', 'Week', 'Day', 'Hour', 'Minute'];
 
+
   constructor(
     private fb: FormBuilder,
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private createEventService: CreateEventService,
-    private SidebarService: SidebarService,
-    private router: Router
-  ) {
+    private sidebarService: SidebarService,
+    private router: Router,
+    @Optional() public activeModal: NgbActiveModal
+  ) {}
+
+  ngOnInit(): void {
+    this.initForm();
+    this.isModal = !!this.activeModal;
+    if (this.isModal && this.task) {
+      this.populateForm();
+    }
+    this.setupPriorityBoxes();
+    this.setupEventListeners();
+  }
+
+  private initForm(): void {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
       priority: ['', Validators.required],
@@ -52,7 +69,7 @@ export class CreateEventComponent implements OnInit {
       setTime: this.fb.group({
         from: [''],
         until: ['']
-      }, { validators: timeRangeValidator }),
+      }, {validators: timeRangeValidator}),
       whole_day: [false],
       repeat: [false],
       repeatOptions: this.fb.group({
@@ -66,10 +83,73 @@ export class CreateEventComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.setupPriorityBoxes();
-    this.setupEventListeners();
+  private populateForm(): void {
+    if (!this.task) return;
+
+    // Parse and format the start_date
+    const startDateString = this.task.start_date;
+    const startDate = new Date(startDateString);
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+
+    // Parse and format the end_date if it exists
+    let formattedEndDate = null;
+    if (this.task.end_date) {
+      const endDateString = this.task.end_date;
+      const endDate = new Date(endDateString);
+      formattedEndDate = endDate.toISOString().split('T')[0];
+    }
+    // Parse and format the start_time
+    const startTimeString = this.task.start_time;
+    const startTime = new Date(startTimeString);
+    const formattedStartTime = startTime.toTimeString().split(' ')[0];
+
+    // Parse and format the end_time
+    const endTimeString = this.task.end_time;
+    const endTime = new Date(endTimeString);
+    const formattedEndTime = endTime.toTimeString().split(' ')[0];
+
+    // Define categories array
+    const categories = [
+      'WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION',
+      'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS',
+      'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'
+    ];
+
+    // Get the category based on index
+    const category = categories[this.task.category - 1];
+
+    this.eventForm.patchValue({
+      name: this.task.name,
+      priority: this.task.priority,
+      flexibility: this.task.flexible ? 'yes' : 'no',
+      default_date: formattedStartDate,
+      date_range: {
+        start: formattedStartDate,
+        end: formattedEndDate
+      },
+      time_range: {
+        start: formattedStartTime,
+        end: formattedEndTime
+      },
+      start_time: formattedStartTime,
+      end_time: formattedEndTime,
+      start_date: formattedStartDate,
+      setTime: {
+        from: formattedStartTime,
+        until: formattedEndTime
+      },
+      whole_day: this.task.whole_day,
+      repeat: this.task.repeat,
+      repeatOptions: {
+        frequency: this.task.repeat_type,
+        times: this.task.repeat_interval
+      },
+      location: this.task.location,
+      category: category,
+      description: this.task.description
+    });
   }
+
 
   setupPriorityBoxes(): void {
     const priorityColor = '#4B7F72';
@@ -209,6 +289,7 @@ export class CreateEventComponent implements OnInit {
       }
     };
   }
+
   lightenDarkenColor(col: string, amt: number): string {
     let usePound = false;
     if (col[0] === '#') {
@@ -244,6 +325,12 @@ export class CreateEventComponent implements OnInit {
     return this.eventForm.get('alarms') as FormArray;
   }
 
+  closeModal() {
+    if (this.activeModal) {
+      this.activeModal.dismiss('Cross click');
+    }
+  }
+
   onSubmit() {
     if (this.eventForm.valid) {
       const formData = this.eventForm.value;
@@ -267,7 +354,7 @@ export class CreateEventComponent implements OnInit {
         console.log(start_time);
 
         let event = {
-          user_id: this.SidebarService.getUserId(),
+          user_id: this.sidebarService.getUserId(),
           name: formData.name,
           priority: formData.priority,
           flexible: false,
@@ -284,10 +371,66 @@ export class CreateEventComponent implements OnInit {
           description: formData.description,
           alarms: formData.alarms
         }
-        let res = this.createEventService.createEvent(event);
-        res.subscribe((data) => {
-          this.router.navigate(['/my-calendar']);
-        })
+        if (!this.isModal) {
+          let res = this.createEventService.createEvent(event);
+          res.subscribe((data) => {
+            this.router.navigate(['/my-calendar']);
+          })
+        } else {
+          switch (event.category) {
+            case 'WORK':
+              event.category = 1;
+              break;
+            case 'PERSONAL':
+              event.category = 2;
+              break;
+            case 'FAMILY':
+              event.category = 3;
+              break;
+            case 'HEALTH':
+              event.category = 4;
+              break;
+            case 'EDUCATION':
+              event.category = 5;
+              break;
+            case 'FINANCE':
+              event.category = 6;
+              break;
+            case 'SOCIAL':
+              event.category = 7;
+              break;
+            case 'TRAVEL':
+              event.category = 8;
+              break;
+            case 'ENTERTAINMENT':
+              event.category = 9;
+              break;
+            case 'SPORTS':
+              event.category = 10;
+              break;
+            case 'MEETING':
+              event.category = 11;
+              break;
+            case 'HOLIDAY':
+              event.category = 12;
+              break;
+            case 'APPOINTMENT':
+              event.category = 13;
+              break;
+            case 'REMINDER':
+              event.category = 14;
+              break;
+            case 'SHOPPING':
+              event.category = 15;
+              break;
+            case 'OTHER':
+              event.category = 16;
+              break;
+            default:
+              event.category = -1;
+          }
+          this.activeModal.close(event);
+        }
       } else{
         console.log("flexible event");
       }

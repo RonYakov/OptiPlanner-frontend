@@ -12,7 +12,6 @@ export class SidebarService {
       ? localStorage.getItem('isOpen') === 'true'
       : false
   );
-  //todo- need to check this^^
 
   isOpen$ = this.isOpen.asObservable();
   userName$ = this.userName.asObservable();
@@ -45,8 +44,8 @@ export class SidebarService {
     return this.userId.value;
   }
 
-  getUserIdAsObservable(): Observable<string> {
-    return this.userId.asObservable();
+  getIsOpen(): boolean {
+    return this.isOpen.value;
   }
 
   toggleIsOpen(): void {
