@@ -15,6 +15,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { TaskDetailComponent } from './components/task-detail/task-detail.component';
 import { AboutComponent } from './components/about/about.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CreateEventComponent,
     TasksPopupComponent,
     TaskDetailComponent,
-    AboutComponent
+    AboutComponent,
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,

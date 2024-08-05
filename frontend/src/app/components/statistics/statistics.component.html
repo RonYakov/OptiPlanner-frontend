@@ -1,0 +1,32 @@
+<div class="statistics-container">
+  <h2 class="statistics-title">Task Analytics Dashboard</h2>
+
+  <div class="statistics-grid">
+    <div class="chart-container">
+      <h3>Task Distribution</h3>
+      <div class="chart-wrapper">
+        <canvas #chartCanvas></canvas>
+        <div class="total-tasks">
+          <span class="total-number">{{ totalTasks }}</span>
+          <span class="total-label">Total Tasks</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-categories">
+      <h3>Top Categories</h3>
+      <ul>
+        <li *ngFor="let category of topCategories">
+          <div class="category-info">
+            <div class="category-color" [style.backgroundColor]="category.color"></div>
+            <span class="category-name">{{ category.name }}</span>
+          </div>
+          <span class="category-count">{{ category.count }}</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar" [style.width.%]="(category.count / totalTasks) * 100" [style.backgroundColor]="category.color"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
