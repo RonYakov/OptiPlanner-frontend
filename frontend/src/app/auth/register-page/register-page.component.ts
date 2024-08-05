@@ -67,14 +67,13 @@ export class RegisterPageComponent implements OnInit {
             if (res.status === 200) {
 
               console.log("sign up with google successful")
-              //todo- redirect to home page
 
             } else {
               this.displayMessage = res.data;
             }
           })
 
-          if(true)// todo- testing: true will signout automatically
+          if(true)
           {
             console.log("Signing out")
             google.accounts.id.disableAutoSelect();

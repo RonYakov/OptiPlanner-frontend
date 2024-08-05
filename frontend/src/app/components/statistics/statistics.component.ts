@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Inject, PLATFO
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';
+import {StatisticsService} from '../../shared/services/statistics.service';
 
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
@@ -12,6 +13,8 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 })
 export class StatisticsComponent implements OnInit, AfterViewInit {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  timeRange: 'week' | 'month' = 'week';
+
 
   categories = [
     'Work', 'Personal', 'Family', 'Health', 'Education',
@@ -30,7 +33,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
   totalTasks: number = 0;
   topCategories: {name: string, count: number, color: string}[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,
+              private statisticService: StatisticsService) {}
 
   ngOnInit() {
     this.generateData();
@@ -97,6 +101,22 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
 
       this.chart = new Chart(ctx, chartConfig as any);
     }
+  }
+
+  setTimeRange(range: 'week' | 'month') {
+    this.timeRange = range;
+  }
+
+  getTasksFromCurrentMonth() {
+    // const userId = localStorage.getItem('userId');
+    // if(userId !== null) {
+    //   this.statisticService.getCurrentMonthEvents(userId).subscribe((tasks) => {
+    //
+    //   });
+    // } else{
+    //   console.error('User ID is null or undefined after initial check');
+    // }
+    //todo- after implementing the backend, fetch the data from the server
   }
 
   ngOnDestroy() {

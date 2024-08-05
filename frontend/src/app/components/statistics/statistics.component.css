@@ -239,3 +239,42 @@ canvas {
     font-size: 1.1rem;
   }
 }
+.time-range-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.time-range-btn {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 30px;
+  margin: 0 0.5rem;
+}
+
+.time-range-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.time-range-btn.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .time-range-selector {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .time-range-btn {
+    margin: 0.5rem 0;
+    width: 80%;
+  }
+}

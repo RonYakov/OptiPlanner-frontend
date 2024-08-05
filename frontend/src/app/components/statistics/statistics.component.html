@@ -1,6 +1,11 @@
 <div class="statistics-container">
   <h2 class="statistics-title">Task Analytics Dashboard</h2>
 
+  <div class="time-range-selector">
+    <button class="time-range-btn" [class.active]="timeRange === 'week'" (click)="setTimeRange('week')">Last Week</button>
+    <button class="time-range-btn" [class.active]="timeRange === 'month'" (click)="setTimeRange('month')">Last Month</button>
+  </div>
+
   <div class="statistics-grid">
     <div class="chart-container">
       <h3>Task Distribution</h3>
