@@ -23,9 +23,12 @@ export class TopBarComponent implements OnInit, OnDestroy {
     );
   }
 
+  goToAbout(): void {
+    this.router.navigate(['/about']);
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 }
 
-//todo- move to higher module, create a real background main page

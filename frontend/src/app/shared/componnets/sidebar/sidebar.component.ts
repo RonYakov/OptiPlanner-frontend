@@ -61,6 +61,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/create-event']);
   }
 
+  navigateToStatistics() {
+    this.router.navigate(['/statistics']);
+  }
+
   signOut(): void {
     this.authService.signout().subscribe(res => {
       if (res.status === 200) {
