@@ -6,11 +6,12 @@ import { Category } from "../../shared/enum/event-category.enum";
 import { Router } from '@angular/router';
 import { timeRangeValidator } from '../../shared/classes/time-range.validator';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-create-event',
   templateUrl: './create-event.component.html',
-  styleUrls: ['./create-event.component.css']
+  styleUrls: ['./create-event.component.css'],
 })
 export class CreateEventComponent implements OnInit {
   task: any;
@@ -27,7 +28,7 @@ export class CreateEventComponent implements OnInit {
     {label: 'Monthly', value: 3}
   ];
   alarmUnits = ['Month', 'Week', 'Day', 'Hour', 'Minute'];
-
+  time = {hour: 13, minute: 30};
 
   constructor(
     private fb: FormBuilder,
