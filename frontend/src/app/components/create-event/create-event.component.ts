@@ -17,7 +17,7 @@ export class CreateEventComponent implements OnInit {
   task: any;
   isModal: boolean = false;
   eventForm: FormGroup = this.fb.group({});
-  priorityLevels = Array.from({length: 7}, (_, i) => i + 1).reverse();
+  priorityLevels = Array.from({length: 2}, (_, i) => i + 1).reverse();
   flexibilityOptions = [
     {value: 'yes', label: 'Yes'},
     {value: 'no', label: 'No'}
@@ -25,7 +25,8 @@ export class CreateEventComponent implements OnInit {
   frequencyOptions = [
     {label: 'Daily', value: 1},
     {label: 'Weekly', value: 2},
-    {label: 'Monthly', value: 3}
+    {label: 'Monthly', value: 3},
+    {label: 'Yearly', value: 4}
   ];
   alarmUnits = ['Month', 'Week', 'Day', 'Hour', 'Minute'];
   time = {hour: 13, minute: 30};
@@ -46,15 +47,28 @@ export class CreateEventComponent implements OnInit {
     if (this.isModal && this.task) {
       this.populateForm();
     }
-    this.setupPriorityBoxes();
+
+    this.eventForm.get('flexibility')?.valueChanges.subscribe(value => {
+      if (value === 'yes') {
+        setTimeout(() => {
+          this.setupPriorityBoxes();
+        });
+      }
+    });
+
     this.setupEventListeners();
   }
 
   private initForm(): void {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
-      priority: ['', Validators.required],
       flexibility: ['', Validators.required],
+      location: ['', Validators.required],
+      category: [Category.WORK, Validators.required],
+      description: ['', Validators.required],
+
+      // Flexible fields
+      priority: [''],
       default_date: [''],
       date_range: this.fb.group({
         start: [''],
@@ -66,20 +80,21 @@ export class CreateEventComponent implements OnInit {
       }),
       start_time: [''],
       end_time: [''],
+
+      // Non-flexible fields
       start_date: [''],
       setTime: this.fb.group({
         from: [''],
         until: ['']
       }, {validators: timeRangeValidator}),
       whole_day: [false],
+
+      // Other fields
       repeat: [false],
       repeatOptions: this.fb.group({
         frequency: [0],
         times: [1]
       }),
-      location: ['', Validators.required],
-      category: [Category.WORK, Validators.required],
-      description: ['', Validators.required],
       alarms: this.fb.array([])
     });
   }
@@ -153,11 +168,16 @@ export class CreateEventComponent implements OnInit {
 
 
   setupPriorityBoxes(): void {
+    console.log('Setting up priority boxes');
     const priorityColor = '#4B7F72';
     const priorityContainer = this.elementRef.nativeElement.querySelector('#priority');
+    console.log('Priority container:', priorityContainer);
+    console.log('Priority levels:', this.priorityLevels);
+
     if (priorityContainer) {
       priorityContainer.innerHTML = ''; // Clear existing content
       this.priorityLevels.forEach(level => {
+        console.log('Creating box for level:', level);
         const color = this.lightenDarkenColor(priorityColor, (level - 1) * 10);
         const box = this.renderer.createElement('div');
         this.renderer.addClass(box, 'priority-box');
@@ -165,10 +185,14 @@ export class CreateEventComponent implements OnInit {
         this.renderer.setProperty(box, 'dataset.value', level);
         this.renderer.listen(box, 'click', () => {
           this.eventForm.get('priority')?.setValue(level);
+          this.eventForm.get('priority')?.markAsTouched();
+          this.eventForm.get('priority')?.updateValueAndValidity();
           this.highlightSelectedPriorityBox(box);
         });
         this.renderer.appendChild(priorityContainer, box);
       });
+    } else {
+      console.error('Priority container not found');
     }
   }
 
@@ -182,72 +206,90 @@ export class CreateEventComponent implements OnInit {
     const form = this.eventForm;
 
     form.get('flexibility')?.valueChanges.subscribe(value => {
-      const startTimeControl = form.get('start_time');
-      const endTimeControl = form.get('end_time');
-      const timeRangeGroup = form.get('time_range') as FormGroup | null;
+      const flexibleControls = ['priority', 'default_date', 'date_range', 'time_range', 'start_time', 'end_time'];
+      const nonFlexibleControls = ['start_date', 'setTime', 'whole_day'];
+
       if (value === 'yes') {
-        startTimeControl?.setValidators(Validators.required);
-        endTimeControl?.setValidators(Validators.required);
-        timeRangeGroup?.get('start')?.setValidators(Validators.required);
-        timeRangeGroup?.get('end')?.setValidators(Validators.required);
+        flexibleControls.forEach(control => {
+          form.get(control)?.setValidators(Validators.required);
+          form.get(control)?.updateValueAndValidity();
+        });
+        nonFlexibleControls.forEach(control => {
+          form.get(control)?.clearValidators();
+          form.get(control)?.updateValueAndValidity();
+        });
+
+        // Apply dateRangeValidator when default_date is set
+        form.get('default_date')?.valueChanges.subscribe(defaultDate => {
+          if (defaultDate) {
+            form.get('date_range')?.setValidators(this.dateRangeValidator(defaultDate));
+          } else {
+            form.get('date_range')?.clearValidators();
+          }
+          form.get('date_range')?.updateValueAndValidity();
+        });
+
+        // Apply timeRangeValidator when start_time and end_time are set
+        form.get('start_time')?.valueChanges.subscribe(startTime => {
+          const endTime = form.get('end_time')?.value;
+          if (startTime && endTime) {
+            form.get('time_range')?.setValidators(this.timeRangeValidator(startTime, endTime));
+            form.get('time_range')?.updateValueAndValidity();
+          }
+        });
+
+        form.get('end_time')?.valueChanges.subscribe(endTime => {
+          const startTime = form.get('start_time')?.value;
+          if (startTime && endTime) {
+            form.get('time_range')?.setValidators(this.timeRangeValidator(startTime, endTime));
+            form.get('time_range')?.updateValueAndValidity();
+          }
+        });
+
       } else {
-        startTimeControl?.clearValidators();
-        endTimeControl?.clearValidators();
-        timeRangeGroup?.get('start')?.clearValidators();
-        timeRangeGroup?.get('end')?.clearValidators();
+        flexibleControls.forEach(control => {
+          form.get(control)?.clearValidators();
+          form.get(control)?.updateValueAndValidity();
+        });
+        nonFlexibleControls.forEach(control => {
+          if (control !== 'whole_day') {
+            form.get(control)?.setValidators(Validators.required);
+            form.get(control)?.updateValueAndValidity();
+          }
+        });
+
+        // Clear flexible validators
+        form.get('date_range')?.clearValidators();
+        form.get('time_range')?.clearValidators();
+        form.get('date_range')?.updateValueAndValidity();
+        form.get('time_range')?.updateValueAndValidity();
       }
-      startTimeControl?.updateValueAndValidity();
-      endTimeControl?.updateValueAndValidity();
-      timeRangeGroup?.get('start')?.updateValueAndValidity();
-      timeRangeGroup?.get('end')?.updateValueAndValidity();
-    });
 
-    form.get('default_date')?.valueChanges.subscribe(value => {
-      const dateRangeGroup = form.get('date_range') as FormGroup | null;
-
-      if (value) {
-        dateRangeGroup?.setValidators(this.dateRangeValidator(value));
+      // Special handling for setTime group
+      const setTimeGroup = form.get('setTime') as FormGroup;
+      if (value === 'no' && !form.get('whole_day')?.value) {
+        setTimeGroup.get('from')?.setValidators(Validators.required);
+        setTimeGroup.get('until')?.setValidators(Validators.required);
       } else {
-        dateRangeGroup?.clearValidators();
+        setTimeGroup.get('from')?.clearValidators();
+        setTimeGroup.get('until')?.clearValidators();
       }
-
-      dateRangeGroup?.updateValueAndValidity();
-    });
-
-    form.get('start_time')?.valueChanges.subscribe(value => {
-      const endTimeControl = form.get('end_time');
-      const timeRangeControl = form.get('time_range');
-
-      if (value && endTimeControl?.value) {
-        timeRangeControl?.setValidators([Validators.required, this.timeRangeValidator(value, endTimeControl?.value)]);
-        timeRangeControl?.updateValueAndValidity();
-      }
-    });
-
-    form.get('end_time')?.valueChanges.subscribe(value => {
-      const startTimeControl = form.get('start_time');
-      const timeRangeControl = form.get('time_range');
-
-      if (value && startTimeControl?.value) {
-        timeRangeControl?.setValidators([Validators.required, this.timeRangeValidator(startTimeControl?.value, value)]);
-        timeRangeControl?.updateValueAndValidity();
-      }
+      setTimeGroup.get('from')?.updateValueAndValidity();
+      setTimeGroup.get('until')?.updateValueAndValidity();
     });
 
     form.get('whole_day')?.valueChanges.subscribe(value => {
-      const setTimeGroup = form.get('setTime') as FormGroup | null;
-
-      if (setTimeGroup) {
+      const setTimeGroup = form.get('setTime') as FormGroup;
+      if (form.get('flexibility')?.value === 'no') {
         if (value) {
           setTimeGroup.get('from')?.clearValidators();
           setTimeGroup.get('until')?.clearValidators();
-          setTimeGroup.get('from')?.setValue(''); // Clear the time values
+          setTimeGroup.get('from')?.setValue('');
           setTimeGroup.get('until')?.setValue('');
         } else {
           setTimeGroup.get('from')?.setValidators(Validators.required);
           setTimeGroup.get('until')?.setValidators(Validators.required);
         }
-
         setTimeGroup.get('from')?.updateValueAndValidity();
         setTimeGroup.get('until')?.updateValueAndValidity();
       }
@@ -335,10 +377,50 @@ export class CreateEventComponent implements OnInit {
   onSubmit() {
     if (this.eventForm.valid) {
       const formData = this.eventForm.value;
+      let event: any = {
+        user_id: this.sidebarService.getUserId(),
+        name: formData.name,
+        flexible: formData.flexibility === 'yes',
+        location: formData.location,
+        category: formData.category,
+        description: formData.description,
+        repeat: formData.repeat,
+        repeat_type: formData.repeatOptions.frequency,
+        repeat_interval: formData.repeatOptions.times,
+        alarms: formData.alarms
+      };
 
-      if (this.eventForm.get('flexibility')?.value === 'no') {
+      if (formData.flexibility === 'yes') {
+        let start_date = new Date(formData.default_date);
+        let end_date = new Date(formData.default_date);
+        let from_flexible_date = new Date(formData.date_range.start);
+        let until_flexible_date = new Date(formData.date_range.end);
+        let start_time, end_time, from_flexible_time, until_flexible_time;
+
+        let startTimeString = formData.start_time.split(':');
+        let endTimeString = formData.end_time.split(':');
+        let fromFlexibleTimeString = formData.time_range.start.split(':');
+        let untilFlexibleTimeString = formData.time_range.end.split(':');
+
+        start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
+        end_time = new Date(end_date.setHours(endTimeString[0], endTimeString[1]));
+        from_flexible_time = new Date(start_date.setHours(fromFlexibleTimeString[0], fromFlexibleTimeString[1]));
+        until_flexible_time = new Date(end_date.setHours(untilFlexibleTimeString[0], untilFlexibleTimeString[1]));
+
+        event = {
+          ...event,
+          priority: formData.priority,
+          start_date: start_date,
+          end_date: end_date,
+          start_time: start_time,
+          end_time: end_time,
+          from_flexible_date: from_flexible_date,
+          until_flexible_date: until_flexible_date,
+          from_flexible_time: from_flexible_time,
+          until_flexible_time: until_flexible_time
+        };
+      } else {
         let start_date = new Date(formData.start_date);
-
         let start_time, end_time;
 
         if (formData.whole_day) {
@@ -351,94 +433,42 @@ export class CreateEventComponent implements OnInit {
           start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
           end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
         }
-
-        console.log(start_time);
-
-        let event = {
-          user_id: this.sidebarService.getUserId(),
-          name: formData.name,
-          priority: formData.priority,
-          flexible: false,
+        event = {
+          ...event,
+          priority: 3,
           start_date: start_date,
           end_date: start_date,
           whole_day: formData.whole_day,
           start_time: start_time,
-          end_time: end_time,
-          repeat: formData.repeat,
-          repeat_type: formData.repeatOptions.frequency,
-          repeat_interval: formData.repeatOptions.times,
-          location: formData.location,
-          category: formData.category,
-          description: formData.description,
-          alarms: formData.alarms
+          end_time: end_time
+        };
+      }
+
+      if (!this.isModal) {
+        let res = this.createEventService.createEvent(event);
+        res.subscribe((data) => {
+          this.router.navigate(['/my-calendar']);
+        });
+      } else {
+        if (typeof event.category === 'string') {
+          const categories = [
+            'WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION',
+            'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS',
+            'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'
+          ];
+          event.category = categories.indexOf(event.category) + 1;
         }
-        if (!this.isModal) {
-          let res = this.createEventService.createEvent(event);
-          res.subscribe((data) => {
-            this.router.navigate(['/my-calendar']);
-          })
-        } else {
-          switch (event.category) {
-            case 'WORK':
-              event.category = 1;
-              break;
-            case 'PERSONAL':
-              event.category = 2;
-              break;
-            case 'FAMILY':
-              event.category = 3;
-              break;
-            case 'HEALTH':
-              event.category = 4;
-              break;
-            case 'EDUCATION':
-              event.category = 5;
-              break;
-            case 'FINANCE':
-              event.category = 6;
-              break;
-            case 'SOCIAL':
-              event.category = 7;
-              break;
-            case 'TRAVEL':
-              event.category = 8;
-              break;
-            case 'ENTERTAINMENT':
-              event.category = 9;
-              break;
-            case 'SPORTS':
-              event.category = 10;
-              break;
-            case 'MEETING':
-              event.category = 11;
-              break;
-            case 'HOLIDAY':
-              event.category = 12;
-              break;
-            case 'APPOINTMENT':
-              event.category = 13;
-              break;
-            case 'REMINDER':
-              event.category = 14;
-              break;
-            case 'SHOPPING':
-              event.category = 15;
-              break;
-            case 'OTHER':
-              event.category = 16;
-              break;
-            default:
-              event.category = -1;
-          }
-          this.activeModal.close(event);
-        }
-      } else{
-        console.log("flexible event");
+        this.activeModal.close(event);
       }
     } else {
       console.log('Form is invalid. Please correct the errors.');
       console.log(this.eventForm.value);
       console.log(this.eventForm.errors);
+
+      Object.keys(this.eventForm.controls).forEach(key => {
+        const control = this.eventForm.get(key);
+        control?.markAsTouched();
+      });
     }
   }
 }

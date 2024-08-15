@@ -13,11 +13,13 @@ export class CreateEventService {
 
 
   createEvent(eventData:any){
+    console.log('eventData', eventData);
     return this.http.post<any>( environment.API_URL + '/events/create-absolute-event', {...eventData}).pipe(map((res: any) => res))
 }
 
 editEvent(eventData:any) {
-  return this.http.post<any>( environment.API_URL + '/events/edit-absolute-event', {...eventData}).pipe(map((res: any) => res))
+    console.log('eventData', eventData);
+    return this.http.post<any>( environment.API_URL + '/events/edit-absolute-event', {...eventData}).pipe(map((res: any) => res))
 }
 
   private handleError(error: any): Observable<never> {

@@ -21,16 +21,6 @@
               Please enter a valid event name.
             </span>
                 </div>
-                <div class="form-group">
-                  <div class="inline-group">
-                    <label for="priority">Priority:</label>
-                    <div id="priority" class="priority-container"></div>
-                    <input type="hidden" formControlName="priority" id="priority-value" required>
-                  </div>
-                  <span class="error-message" *ngIf="eventForm.get('priority')!.invalid && eventForm.get('priority')!.touched">
-                    Please select a priority.
-                  </span>
-                </div>
 
                 <div class="form-group">
                   <div class="inline-group">
@@ -112,6 +102,16 @@
                 </div>
 
                 <div *ngIf="eventForm.get('flexibility')?.value === 'yes'">
+                  <div class="form-group">
+                    <div class="inline-group">
+                      <label for="priority">Priority:</label>
+                      <div id="priority" class="priority-container"></div>
+                      <input type="hidden" formControlName="priority" id="priority-value" required>
+                    </div>
+                    <span class="error-message" *ngIf="eventForm.get('priority')!.invalid && eventForm.get('priority')!.touched">
+                    Please select a priority.
+                  </span>
+                  </div>
                   <div class="form-group">
                     <div class="inline-group">
                       <label for="default-date">Default Date:</label>
