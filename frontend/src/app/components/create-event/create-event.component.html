@@ -63,12 +63,15 @@
                         </div>
                         <div class="date-time-group">
                           <label for="time-until">Until:</label>
-                          <input type="time" id="time-until" formControlName="until" required class="form-control">
+                          <input type="time" id="time-until" formControlName="until" required class="form-control" [disabled]="isUntilIn()">
                         </div>
                       </div>
-                      <span class="error-message" *ngIf="eventForm.get('setTime')?.errors?.['timeRangeInvalid']">
-                  Invalid time range.
-                </span>
+<!--                      <span class="error-message" *ngIf="eventForm.get('setTime')?.errors?.['timeRangeInvalid']">-->
+<!--                  Invalid time range.-->
+<!--                </span>-->
+                      <span class="error-message" *ngIf="invalidUntilTime()">
+                         Until time must be greater than from time.
+                      </span>
                     </div>
                   </div>
 
@@ -153,7 +156,7 @@
                         <input type="time" id="end-time" formControlName="end_time" class="form-control">
                       </div>
                     </div>
-                    <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['startTimeAfterEndTime']">
+                    <span class="error-message" *ngIf="invalidEndTime()">
                 Start time cannot be after end time.
               </span>
                   </div>
@@ -172,7 +175,7 @@
                     <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['timeRangeExceeded']">
                 The difference between start time and end time is greater than the time range.
               </span>
-                    <span class="error-message" *ngIf="eventForm.get('time_range')?.errors?.['startRangeAfterEndRange']">
+                    <span class="error-message" *ngIf="invalidEndRangeTime()">
                 Start range cannot be after end range.
               </span>
                   </div>
@@ -243,7 +246,7 @@
                   </div>
                 </div>
 
-                <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid">Create Event</button>
+                <button type="submit" style="cursor: pointer" [disabled]="!eventForm.valid || validTimeToSubmit() || validFlexTimeToSubmit() || validFlexTimeRangeToSubmit()">Create Event</button>
               </form>
             </div>
           </div>
