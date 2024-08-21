@@ -41,7 +41,6 @@ export class TaskDetailComponent implements OnInit {
 
       let res = this.createEventService.editEvent(this.task);
       res.subscribe((data) => {
-        console.log(data);
         window.location.reload();
       });
     }).catch((error) => {

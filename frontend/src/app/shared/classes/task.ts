@@ -18,7 +18,11 @@ export class Task {
     public location?: string,
     public category?: number,
     public description?: string,
-    public alarms?: EventAlarm[]
+    public alarms?: EventAlarm[],
+    public from_flexible_date?: Date,
+    public until_flexible_date?: Date,
+    public from_flexible_time?: Date,
+    public until_flexible_time?: Date
   ) {}
 
   getStartTime(): string {

@@ -33,7 +33,11 @@ export class CalendarService {
               task.location || '',
               task.category || 0,
               task.description || '',
-              task.alarms || []
+              task.alarms || [],
+              new Date(task.from_flexible_date || 0),
+              new Date(task.until_flexible_date || 0),
+              new Date(task.from_flexible_time || 0),
+              new Date(task.until_flexible_time || 0)
             ));
           } else {
             // Handle non-200 status codes appropriately
