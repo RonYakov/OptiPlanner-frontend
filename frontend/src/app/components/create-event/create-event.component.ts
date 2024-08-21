@@ -132,15 +132,17 @@ export class CreateEventComponent implements OnInit {
     // Parse and format the start_date
     const startDateString = this.task.start_date;
     const startDate = new Date(startDateString);
+    startDate.setDate(startDate.getDate() + 1);
     const formattedStartDate = startDate.toISOString().split('T')[0];
 
-    // Parse and format the end_date if it exists
     let formattedEndDate = null;
     if (this.task.end_date) {
       const endDateString = this.task.end_date;
       const endDate = new Date(endDateString);
+      endDate.setDate(endDate.getDate() + 1);
       formattedEndDate = endDate.toISOString().split('T')[0];
     }
+
     // Parse and format the start_time
     const startTimeString = this.task.start_time;
     const startTime = new Date(startTimeString);
@@ -161,18 +163,43 @@ export class CreateEventComponent implements OnInit {
     // Get the category based on index
     const category = categories[this.task.category - 1];
 
+    let dateRangeStart = formattedStartDate;
+    let dateRangeEnd = formattedEndDate;
+    let timeRangeStart = formattedStartTime;
+    let timeRangeEnd = formattedEndTime;
+    if(this.task.flexible) {
+      console.log(this.task)
+      const startDateRangeString = this.task.from_flexible_date;
+      const startDateRange = new Date(startDateRangeString);
+      startDateRange.setDate(startDateRange.getDate() + 1);
+      dateRangeStart = startDateRange.toISOString().split('T')[0];
+
+      const endDateRangeString = this.task.until_flexible_date;
+      const endDateRange = new Date(endDateRangeString);
+      endDateRange.setDate(endDateRange.getDate() + 1);
+      dateRangeEnd = endDateRange.toISOString().split('T')[0];
+
+      const startTimeRangeString = this.task.from_flexible_time;
+      const startTimeRange = new Date(startTimeRangeString);
+      timeRangeStart = startTimeRange.toTimeString().split(' ')[0];
+
+      const endTimeRangeString = this.task.until_flexible_time;
+      const endTimeRange = new Date(endTimeRangeString);
+      timeRangeEnd = endTimeRange.toTimeString().split(' ')[0];
+    }
+
     this.eventForm.patchValue({
       name: this.task.name,
       priority: this.task.priority,
       flexibility: this.task.flexible ? 'yes' : 'no',
       default_date: formattedStartDate,
       date_range: {
-        start: formattedStartDate,
-        end: formattedEndDate
+        start: dateRangeStart,
+        end: dateRangeEnd
       },
       time_range: {
-        start: formattedStartTime,
-        end: formattedEndTime
+        start: timeRangeStart,
+        end: timeRangeEnd
       },
       start_time: formattedStartTime,
       end_time: formattedEndTime,
