@@ -1,5 +1,14 @@
 import { Component, OnInit, Renderer2, ElementRef, Optional } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, FormControl} from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+  FormControl,
+  ValidationErrors
+} from '@angular/forms';
 import { CreateEventService } from '../../shared/services/create-event.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
 import { Category } from "../../shared/enum/event-category.enum";
@@ -30,6 +39,7 @@ export class CreateEventComponent implements OnInit {
   ];
   alarmUnits = ['Month', 'Week', 'Day', 'Hour', 'Minute'];
   time = {hour: 13, minute: 30};
+  untilTimeChecker: any;
 
   constructor(
     private fb: FormBuilder,
@@ -39,10 +49,13 @@ export class CreateEventComponent implements OnInit {
     private sidebarService: SidebarService,
     private router: Router,
     @Optional() public activeModal: NgbActiveModal
-  ) {}
+  ) {
+
+  }
 
   ngOnInit(): void {
     this.initForm();
+    this.setupImmediateValidation();
     this.isModal = !!this.activeModal;
     if (this.isModal && this.task) {
       this.populateForm();
@@ -57,6 +70,20 @@ export class CreateEventComponent implements OnInit {
     });
 
     this.setupEventListeners();
+  }
+
+  ngOnChanges(changes: any) {
+
+  }
+
+  private setupImmediateValidation(): void {
+    const setTimeGroup = this.eventForm.get('setTime') as FormGroup;
+    setTimeGroup.get('from')?.valueChanges.subscribe(() => {
+      setTimeGroup.updateValueAndValidity();
+    });
+    setTimeGroup.get('until')?.valueChanges.subscribe(() => {
+      setTimeGroup.updateValueAndValidity();
+    });
   }
 
   private initForm(): void {
@@ -84,9 +111,9 @@ export class CreateEventComponent implements OnInit {
       // Non-flexible fields
       start_date: [''],
       setTime: this.fb.group({
-        from: [''],
-        until: ['']
-      }, {validators: timeRangeValidator}),
+        from: ['', Validators.required],
+        until: ['', Validators.required]
+      }, {validators: this.timeRangeValidator()}),
       whole_day: [false],
 
       // Other fields
@@ -233,7 +260,7 @@ export class CreateEventComponent implements OnInit {
         form.get('start_time')?.valueChanges.subscribe(startTime => {
           const endTime = form.get('end_time')?.value;
           if (startTime && endTime) {
-            form.get('time_range')?.setValidators(this.timeRangeValidator(startTime, endTime));
+            form.get('time_range')?.setValidators(this.timeRangeValidator());
             form.get('time_range')?.updateValueAndValidity();
           }
         });
@@ -241,7 +268,7 @@ export class CreateEventComponent implements OnInit {
         form.get('end_time')?.valueChanges.subscribe(endTime => {
           const startTime = form.get('start_time')?.value;
           if (startTime && endTime) {
-            form.get('time_range')?.setValidators(this.timeRangeValidator(startTime, endTime));
+            form.get('time_range')?.setValidators(this.timeRangeValidator());
             form.get('time_range')?.updateValueAndValidity();
           }
         });
@@ -312,26 +339,26 @@ export class CreateEventComponent implements OnInit {
     };
   }
 
-  timeRangeValidator(startTime: string, endTime: string): ValidatorFn {
-    return (group: AbstractControl): {[key: string]: any} | null => {
-      const startRange = new Date(`1970-01-01T${group.get('start')?.value}:00`);
-      const endRange = new Date(`1970-01-01T${group.get('end')?.value}:00`);
-      const start = new Date(`1970-01-01T${startTime}:00`);
-      const end = new Date(`1970-01-01T${endTime}:00`);
-      const diff = Math.abs(end.getTime() - start.getTime()) / 3600000; // difference in hours
-      const range = Math.abs(endRange.getTime() - startRange.getTime()) / 3600000; // range in hours
-
-      if (startRange > endRange) {
-        return { 'startRangeAfterEndRange': { value: group.value } };
-      } else if (start > end) {
-        return { 'startTimeAfterEndTime': { value: group.value } };
-      } else if (diff <= range) {
-        return null;
-      } else {
-        return { 'timeRangeExceeded': { value: group.value } };
-      }
-    };
-  }
+  // timeRangeValidator(startTime: string, endTime: string): ValidatorFn {
+  //   return (group: AbstractControl): {[key: string]: any} | null => {
+  //     const startRange = new Date(`1970-01-01T${group.get('start')?.value}:00`);
+  //     const endRange = new Date(`1970-01-01T${group.get('end')?.value}:00`);
+  //     const start = new Date(`1970-01-01T${startTime}:00`);
+  //     const end = new Date(`1970-01-01T${endTime}:00`);
+  //     const diff = Math.abs(end.getTime() - start.getTime()) / 3600000; // difference in hours
+  //     const range = Math.abs(endRange.getTime() - startRange.getTime()) / 3600000; // range in hours
+  //
+  //     if (startRange > endRange) {
+  //       return { 'startRangeAfterEndRange': { value: group.value } };
+  //     } else if (start > end) {
+  //       return { 'startTimeAfterEndTime': { value: group.value } };
+  //     } else if (diff <= range) {
+  //       return null;
+  //     } else {
+  //       return { 'timeRangeExceeded': { value: group.value } };
+  //     }
+  //   };
+  // }
 
   lightenDarkenColor(col: string, amt: number): string {
     let usePound = false;
@@ -375,7 +402,7 @@ export class CreateEventComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.eventForm.valid) {
+    if (this.eventForm.valid ) {
       const formData = this.eventForm.value;
       let event: any = {
         user_id: this.sidebarService.getUserId(),
@@ -471,4 +498,106 @@ export class CreateEventComponent implements OnInit {
       });
     }
   }
+  timeRangeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const fromTime = control.get('from')?.value;
+      const untilTime = control.get('until')?.value;
+
+      if (fromTime && untilTime && fromTime >= untilTime) {
+        return { timeRangeInvalid: true };
+      }
+      return null;
+    };
+  }
+
+  invalidUntilTime() {
+    const setTimeGroup = this.eventForm.get('setTime') as FormGroup;
+    const fromTime = setTimeGroup.get('from')?.value;
+    const untilTime = setTimeGroup.get('until')?.value;
+
+    if (fromTime && untilTime) {
+      const [fromHour, fromMinute] = fromTime.split(':');
+      const [untilHour, untilMinute] = untilTime.split(':');
+
+      if(parseInt(fromHour) - parseInt(untilHour) < 0){
+        return false;
+      }else if(parseInt(fromHour) - parseInt(untilHour)  === 0){
+        return parseInt(fromMinute) - parseInt(untilMinute) >= 0;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  isUntilIn() {
+    const setTimeGroup = this.eventForm.get('setTime') as FormGroup;
+
+    return setTimeGroup.get('until')?.value !== '' && setTimeGroup.get('until')?.value;
+  }
+
+  validTimeToSubmit() {
+    const setTimeGroup = this.eventForm.get('setTime') as FormGroup;
+    const fromTime = setTimeGroup.get('from')?.value;
+    const untilTime = setTimeGroup.get('until')?.value;
+
+
+    return this.invalidUntilTime() && fromTime && untilTime;
+  }
+
+  invalidEndTime() {
+    // const timeRange = this.eventForm.get('time_range') as FormGroup;
+    // const start = timeRange.get('start_time')?.value;
+    // const end = timeRange.get('end_time')?.value;
+    let start = this.eventForm.get('start_time')?.value;
+    let end = this.eventForm.get('end_time')?.value;
+
+    if (start && end) {
+      const [startHour, startMinute] = start.split(':');
+      const [endHour, endMinute] = end.split(':');
+
+      if(parseInt(startHour) - parseInt(endHour) < 0){
+        return false;
+      }else if(parseInt(startHour) - parseInt(endHour)  === 0){
+        return parseInt(startMinute) - parseInt(endMinute) >= 0;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  validFlexTimeToSubmit() {
+    let start = this.eventForm.get('start_time')?.value;
+    let end = this.eventForm.get('end_time')?.value;
+
+    return this.invalidEndTime() && start && end;
+  }
+
+  invalidEndRangeTime() {
+    const timeRange = this.eventForm.get('time_range') as FormGroup;
+    const start = timeRange.get('start')?.value;
+    const end = timeRange.get('end')?.value;
+
+
+    if (start && end) {
+      const [startHour, startMinute] = start.split(':');
+      const [endHour, endMinute] = end.split(':');
+
+      if(parseInt(startHour) - parseInt(endHour) < 0){
+        return false;
+      }else if(parseInt(startHour) - parseInt(endHour)  === 0){
+        return parseInt(startMinute) - parseInt(endMinute) >= 0;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  validFlexTimeRangeToSubmit() {
+    const timeRange = this.eventForm.get('time_range') as FormGroup;
+    const start = timeRange.get('start')?.value;
+    const end = timeRange.get('end')?.value;
+
+    return this.invalidEndRangeTime() && start && end;
+  }
+
 }
