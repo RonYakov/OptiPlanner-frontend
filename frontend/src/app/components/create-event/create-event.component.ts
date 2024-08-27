@@ -13,16 +13,19 @@ import { CreateEventService } from '../../shared/services/create-event.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
 import { Category } from "../../shared/enum/event-category.enum";
 import { Router } from '@angular/router';
-import { timeRangeValidator } from '../../shared/classes/time-range.validator';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { LoadingService } from '../../shared/services/loading.service';
+
 @Component({
   selector: 'app-create-event',
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css'],
 })
 export class CreateEventComponent implements OnInit {
+  showResolver = false;
+  conflictingEvents: any[] = [];
+  eventName: any = null;
+
   task: any;
   isModal: boolean = false;
   eventForm: FormGroup = this.fb.group({});
@@ -48,10 +51,9 @@ export class CreateEventComponent implements OnInit {
     private createEventService: CreateEventService,
     private sidebarService: SidebarService,
     private router: Router,
-    @Optional() public activeModal: NgbActiveModal
-  ) {
-
-  }
+    @Optional() public activeModal: NgbActiveModal,
+    private loadingService: LoadingService
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -428,80 +430,91 @@ export class CreateEventComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    if (this.eventForm.valid ) {
-      const formData = this.eventForm.value;
-      let event: any = {
-        user_id: this.sidebarService.getUserId(),
-        name: formData.name,
-        flexible: formData.flexibility === 'yes',
-        location: formData.location,
-        category: formData.category,
-        description: formData.description,
-        repeat: formData.repeat,
-        repeat_type: formData.repeatOptions.frequency,
-        repeat_interval: formData.repeatOptions.times,
-        alarms: formData.alarms
+  createEventToSend(){
+    const formData = this.eventForm.value;
+    let event: any = {
+      user_id: this.sidebarService.getUserId(),
+      name: formData.name,
+      flexible: formData.flexibility === 'yes',
+      location: formData.location,
+      category: formData.category,
+      description: formData.description,
+      repeat: formData.repeat,
+      repeat_type: formData.repeatOptions.frequency,
+      repeat_interval: formData.repeatOptions.times,
+      alarms: formData.alarms
+    };
+
+    if (formData.flexibility === 'yes') {
+      let start_date = new Date(formData.default_date);
+      let end_date = new Date(formData.default_date);
+      let from_flexible_date = new Date(formData.date_range.start);
+      let until_flexible_date = new Date(formData.date_range.end);
+      let start_time, end_time, from_flexible_time, until_flexible_time;
+
+      let startTimeString = formData.start_time.split(':');
+      let endTimeString = formData.end_time.split(':');
+      let fromFlexibleTimeString = formData.time_range.start.split(':');
+      let untilFlexibleTimeString = formData.time_range.end.split(':');
+
+      start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
+      end_time = new Date(end_date.setHours(endTimeString[0], endTimeString[1]));
+      from_flexible_time = new Date(start_date.setHours(fromFlexibleTimeString[0], fromFlexibleTimeString[1]));
+      until_flexible_time = new Date(end_date.setHours(untilFlexibleTimeString[0], untilFlexibleTimeString[1]));
+
+      return {
+        ...event,
+        priority: formData.priority,
+        start_date: start_date,
+        end_date: end_date,
+        start_time: start_time,
+        end_time: end_time,
+        from_flexible_date: from_flexible_date,
+        until_flexible_date: until_flexible_date,
+        from_flexible_time: from_flexible_time,
+        until_flexible_time: until_flexible_time
       };
+    } else {
+      let start_date = new Date(formData.start_date);
+      let start_time, end_time;
 
-      if (formData.flexibility === 'yes') {
-        let start_date = new Date(formData.default_date);
-        let end_date = new Date(formData.default_date);
-        let from_flexible_date = new Date(formData.date_range.start);
-        let until_flexible_date = new Date(formData.date_range.end);
-        let start_time, end_time, from_flexible_time, until_flexible_time;
-
-        let startTimeString = formData.start_time.split(':');
-        let endTimeString = formData.end_time.split(':');
-        let fromFlexibleTimeString = formData.time_range.start.split(':');
-        let untilFlexibleTimeString = formData.time_range.end.split(':');
+      if (formData.whole_day) {
+        start_time = new Date(start_date.setHours(0, 0));
+        end_time = new Date(start_date.setHours(23, 59));
+      } else {
+        let startTimeString = formData.setTime.from.split(':');
+        let endTimeString = formData.setTime.until.split(':');
 
         start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
-        end_time = new Date(end_date.setHours(endTimeString[0], endTimeString[1]));
-        from_flexible_time = new Date(start_date.setHours(fromFlexibleTimeString[0], fromFlexibleTimeString[1]));
-        until_flexible_time = new Date(end_date.setHours(untilFlexibleTimeString[0], untilFlexibleTimeString[1]));
-
-        event = {
-          ...event,
-          priority: formData.priority,
-          start_date: start_date,
-          end_date: end_date,
-          start_time: start_time,
-          end_time: end_time,
-          from_flexible_date: from_flexible_date,
-          until_flexible_date: until_flexible_date,
-          from_flexible_time: from_flexible_time,
-          until_flexible_time: until_flexible_time
-        };
-      } else {
-        let start_date = new Date(formData.start_date);
-        let start_time, end_time;
-
-        if (formData.whole_day) {
-          start_time = new Date(start_date.setHours(0, 0));
-          end_time = new Date(start_date.setHours(23, 59));
-        } else {
-          let startTimeString = formData.setTime.from.split(':');
-          let endTimeString = formData.setTime.until.split(':');
-
-          start_time = new Date(start_date.setHours(startTimeString[0], startTimeString[1]));
-          end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
-        }
-        event = {
-          ...event,
-          priority: 3,
-          start_date: start_date,
-          end_date: start_date,
-          whole_day: formData.whole_day,
-          start_time: start_time,
-          end_time: end_time
-        };
+        end_time = new Date(start_date.setHours(endTimeString[0], endTimeString[1]));
       }
+      return {
+        ...event,
+        priority: 3,
+        start_date: start_date,
+        end_date: start_date,
+        whole_day: formData.whole_day,
+        start_time: start_time,
+        end_time: end_time
+      };
+    }
+  }
+
+
+  onSubmit() {
+    if (this.eventForm.valid ) {
+    const event = this.createEventToSend();
 
       if (!this.isModal) {
-        let res = this.createEventService.createEvent(event);
-        res.subscribe((data) => {
-          this.router.navigate(['/my-calendar']);
+        this.loadingService.setLoading(true);
+        this.createEventService.createEvent(event).subscribe(data => {
+          this.loadingService.setLoading(false);
+
+          if(data.status === 200) {
+            this.router.navigate(['/my-calendar']);
+          } else{
+            this.ifEventCreationFailed(data);
+          }
         });
       } else {
         if (typeof event.category === 'string') {
@@ -525,6 +538,7 @@ export class CreateEventComponent implements OnInit {
       });
     }
   }
+
   timeRangeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const fromTime = control.get('from')?.value;
@@ -627,4 +641,33 @@ export class CreateEventComponent implements OnInit {
     return this.invalidEndRangeTime() && start && end;
   }
 
+  private ifEventCreationFailed(data: any) {
+    this.conflictingEvents = [...data.object1];
+      this.showResolver = true;
+  }
+
+  onResolveConflicts() {
+    this.showResolver = false;
+    this.retryEventCreation();
+  }
+
+  onCancelEditing() {
+    this.showResolver = false;
+    this.router.navigate(['/my-calendar']);
+  }
+
+  private retryEventCreation() {
+    this.loadingService.setLoading(true);
+
+    let event = this.createEventToSend();
+     this.createEventService.createChangeEvents(event, this.conflictingEvents).subscribe(data => {
+       this.loadingService.setLoading(false);
+        console.log(data)
+       if(data.status === 200) {
+         this.router.navigate(['/my-calendar']);
+       } else{
+         this.ifEventCreationFailed(data);
+       }
+     });
+  }
 }

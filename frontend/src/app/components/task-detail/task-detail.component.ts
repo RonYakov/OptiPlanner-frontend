@@ -4,6 +4,7 @@ import { CalendarService } from '../../shared/services/calendar.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateEventComponent } from '../create-event/create-event.component';
 import { CreateEventService } from '../../shared/services/create-event.service';
+import { LoadingService } from '../../shared/services/loading.service';
 
 @Component({
   selector: 'app-task-detail',
@@ -14,9 +15,14 @@ export class TaskDetailComponent implements OnInit {
   @Input() task!: Task;
   @Output() close = new EventEmitter<void>();
 
+  showResolver = false;
+  conflictingEvents: any[] = [];
+  newEvent: any = null;
+
   constructor(private calendarService: CalendarService,
               private modalService: NgbModal,
-              private  createEventService: CreateEventService) { }
+              private  createEventService: CreateEventService,
+              private loadingService: LoadingService) { }
 
   ngOnInit(): void { }
 
@@ -33,18 +39,23 @@ export class TaskDetailComponent implements OnInit {
   }
 
   onEdit() {
+    this.newEvent = this.task.name;
     const modalRef = this.modalService.open(CreateEventComponent, { size: 'lg' });
     modalRef.componentInstance.task = this.task;
 
     modalRef.result.then((event) => {
       this.task = Object.assign(this.task, event);
-
+      this.loadingService.setLoading(true);
       let res = this.createEventService.editEvent(this.task);
       res.subscribe((data) => {
-        window.location.reload();
+        this.loadingService.setLoading(false);
+        if(data.status === 200){
+          window.location.reload();
+        } else {
+          this.ifEventCreationFailed(data);
+        }
       });
     }).catch((error) => {
-      console.log(error);
     });
   }
   onDelete() {
@@ -57,5 +68,35 @@ export class TaskDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  private ifEventCreationFailed(data: any) {
+    this.conflictingEvents = [...data.object1];
+    this.showResolver = true;
+  }
+
+  onResolveConflicts() {
+    this.showResolver = false;
+    this.retryEventCreation();
+  }
+
+  onCancelEditing() {
+    this.showResolver = false;
+    window.location.reload();
+  }
+
+  private retryEventCreation() {
+    this.loadingService.setLoading(true);
+
+    let res = this.createEventService.editChangeEvents(this.task, this.conflictingEvents);
+    res.subscribe((data) => {
+      this.loadingService.setLoading(false);
+
+      if(data.status === 200) {
+        window.location.reload();
+      } else{
+        this.ifEventCreationFailed(data);
+      }
+    });
   }
 }

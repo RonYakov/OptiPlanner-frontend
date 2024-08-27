@@ -213,7 +213,6 @@ export class TasksPopupComponent implements OnInit, OnChanges {
   }
 
   selectTask(task: Task) {
-    console.log(task);
     this.selectedTask = task;
   }
 

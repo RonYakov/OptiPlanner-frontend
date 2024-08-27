@@ -16,6 +16,7 @@ import { TaskDetailComponent } from './components/task-detail/task-detail.compon
 import { AboutComponent } from './components/about/about.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { LoadingService } from './shared/services/loading.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     TasksPopupComponent,
     TaskDetailComponent,
     AboutComponent,
-    StatisticsComponent
+    StatisticsComponent,
   ],
     imports: [
         BrowserModule,
@@ -40,7 +41,8 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     ],
   providers: [
     provideClientHydration(),
-    WINDOW_PROVIDERS
+    WINDOW_PROVIDERS,
+    LoadingService
   ],
   bootstrap: [AppComponent]
 })
