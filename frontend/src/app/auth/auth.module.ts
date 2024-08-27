@@ -20,8 +20,8 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     AuthRoutingModule,
     ReactiveFormsModule,
-    SharedModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ]
 })
 export class AuthModule { }

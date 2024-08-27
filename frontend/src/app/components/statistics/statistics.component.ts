@@ -1,8 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';
-import {StatisticsService} from '../../shared/services/statistics.service';
+import { StatisticsService } from '../../shared/services/statistics.service';
+import { LoadingService } from '../../shared/services/loading.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
@@ -11,15 +14,14 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.scss']
 })
-export class StatisticsComponent implements OnInit, AfterViewInit {
+export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   timeRange: 'week' | 'month' = 'week';
 
-
   categories = [
-    'Work', 'Personal', 'Family', 'Health', 'Education',
-    'Finance', 'Social', 'Travel', 'Entertainment', 'Sports',
-    'Meeting', 'Holiday', 'Appointment', 'Reminder', 'Shopping', 'Other'
+    'WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION',
+    'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS',
+    'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'
   ];
 
   chartColors = [
@@ -33,12 +35,16 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
   totalTasks: number = 0;
   topCategories: {name: string, count: number, color: string}[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,
-              private statisticService: StatisticsService) {}
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private statisticsService: StatisticsService,
+    private loadingService: LoadingService
+  ) {}
 
   ngOnInit() {
-    this.generateData();
-    this.calculateStatistics();
+    this.fetchData();
   }
 
   ngAfterViewInit() {
@@ -47,8 +53,36 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateData() {
-    this.taskCounts = this.categories.map(() => Math.floor(Math.random() * 50) + 1);
+  fetchData() {
+    this.loadingService.setLoading(true);
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      const observable = this.timeRange === 'week'
+        ? this.statisticsService.getCurrentWeekEvents(userId)
+        : this.statisticsService.getCurrentMonthEvents(userId);
+
+      observable.pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data) => {
+          this.processData(data);
+          this.updateChart();
+        },
+        error: (error) => {
+          console.error(`Error fetching ${this.timeRange}ly data:`, error);
+          // Handle error (e.g., show error message to user)
+        },
+        complete: () => {
+          this.loadingService.setLoading(false);
+        }
+      });
+    } else {
+      console.error('User ID is null or undefined');
+      this.loadingService.setLoading(false);
+    }
+  }
+
+  processData(data: Record<string, number>) {
+    this.taskCounts = this.categories.map(category => data[category] || 0);
+    this.calculateStatistics();
   }
 
   calculateStatistics() {
@@ -94,7 +128,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
           },
           cutout: '70%',
           layout: {
-            padding: 10 // This adds some padding around the chart
+            padding: 10
           }
         }
       };
@@ -103,23 +137,23 @@ export class StatisticsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setTimeRange(range: 'week' | 'month') {
-    this.timeRange = range;
+  updateChart() {
+    if (this.chart) {
+      this.chart.data.datasets[0].data = this.taskCounts;
+      this.chart.update();
+    } else if (isPlatformBrowser(this.platformId)) {
+      this.createChart();
+    }
   }
 
-  getTasksFromCurrentMonth() {
-    // const userId = localStorage.getItem('userId');
-    // if(userId !== null) {
-    //   this.statisticService.getCurrentMonthEvents(userId).subscribe((tasks) => {
-    //
-    //   });
-    // } else{
-    //   console.error('User ID is null or undefined after initial check');
-    // }
-    //todo- after implementing the backend, fetch the data from the server
+  setTimeRange(range: 'week' | 'month') {
+    this.timeRange = range;
+    this.fetchData();
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.chart) {
       this.chart.destroy();
     }

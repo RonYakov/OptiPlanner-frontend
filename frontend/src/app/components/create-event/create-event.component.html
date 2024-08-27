@@ -3,6 +3,14 @@
     <div class="main-container" [class.modal-open]="isModal">
       <div class="content" [class.modal-open]="isModal">
         <div class="container">
+          <app-failed-events
+            *ngIf="showResolver"
+            [newEvent]="this.eventForm.value.name"
+            [flexibleEvents]="conflictingEvents"
+            (change)="onResolveConflicts()"
+            (cancel)="onCancelEditing()">
+          </app-failed-events>
+
           <div class="create-event-container">
             <div *ngIf="isModal" class="modal-header">
               <h1>Edit Event</h1>
