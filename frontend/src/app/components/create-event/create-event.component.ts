@@ -642,7 +642,7 @@ export class CreateEventComponent implements OnInit {
   }
 
   private ifEventCreationFailed(data: any) {
-    this.conflictingEvents = [...data.object1];
+    this.conflictingEvents = data.object1;
       this.showResolver = true;
   }
 
