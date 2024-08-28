@@ -25,9 +25,22 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   chartColors = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-    '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-    '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'
+    '#7395c5',
+    '#36A2EB',
+    '#A680B8',
+    '#FF9F40',
+    '#97D077',
+    '#966738',
+    '#EA6B66',
+    '#E64735',
+    '#E3AD42',
+    '#FFCE56',
+    '#B5739D',
+    '#0F996B',
+    '#4BC0C0',
+    '#009999',
+    '#ee5985',
+    '#607D8B'
   ];
 
   taskCounts: number[] = [];

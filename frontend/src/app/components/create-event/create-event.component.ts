@@ -225,7 +225,7 @@ export class CreateEventComponent implements OnInit {
 
   setupPriorityBoxes(): void {
     console.log('Setting up priority boxes');
-    const priorityColor = '#4B7F72';
+    const priorityColor = '#4a8a79';
     const priorityContainer = this.elementRef.nativeElement.querySelector('#priority');
     console.log('Priority container:', priorityContainer);
     console.log('Priority levels:', this.priorityLevels);
@@ -233,8 +233,7 @@ export class CreateEventComponent implements OnInit {
     if (priorityContainer) {
       priorityContainer.innerHTML = ''; // Clear existing content
       this.priorityLevels.forEach(level => {
-        console.log('Creating box for level:', level);
-        const color = this.lightenDarkenColor(priorityColor, (level - 1) * 10);
+        const color = this.lightenDarkenColor(priorityColor, (level - 1) * 60);
         const box = this.renderer.createElement('div');
         this.renderer.addClass(box, 'priority-box');
         this.renderer.setStyle(box, 'backgroundColor', color);

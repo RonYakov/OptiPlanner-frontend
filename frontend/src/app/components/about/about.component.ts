@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SidebarService } from '../../shared/services/sidebar.service';
 import { Subscription } from 'rxjs';
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-about',
@@ -10,6 +11,9 @@ import { Subscription } from 'rxjs';
 export class AboutComponent implements OnInit, OnDestroy {
   isSideBarOpen: boolean = false;
   private subscription: Subscription | undefined;
+  zivImg: string = environment.API_URL + '/ZivImage.jpg';
+  idoImg: string = environment.API_URL + '/IdoHirschmannImage.jpg';
+  ronImg: string = environment.API_URL + '/RonYakovPassport.jpg';
 
   constructor(private sidebarService: SidebarService) { }
 
