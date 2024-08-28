@@ -19,23 +19,24 @@ export class CalendarComponent implements OnInit {
   @Output() dayClicked = new EventEmitter<Task[]>();
   @ViewChild(TasksPopupComponent) tasksPopup!: TasksPopupComponent;
   googleCalendarColors:Record<string, string> = {
-     'WORK': '#2962FF',
-     'PERSONAL': '#43A047',
-     'FAMILY': '#FB8C00',
-     'HEALTH': '#D50000',
-     'EDUCATION': '#8E24AA',
-     'FINANCE': '#FDD835',
-     'SOCIAL': '#00BFA5',
-     'TRAVEL': '#039BE5',
-     'ENTERTAINMENT': '#E64A19',
-     'SPORTS': '#AEEA00',
-     'MEETING': '#304FFE',
-     'HOLIDAY': '#64DD17',
-     'APPOINTMENT': '#FFAB00',
-     'REMINDER': '#795548',
-     'SHOPPING': '#9E9E9E',
+     'WORK': '#7395c5',
+     'PERSONAL': '#36A2EB',
+     'FAMILY': '#A680B8',
+     'HEALTH': '#FF9F40',
+     'EDUCATION': '#97D077',
+     'FINANCE': '#966738',
+     'SOCIAL': '#EA6B66',
+     'TRAVEL': '#E64735',
+     'ENTERTAINMENT': '#E3AD42',
+     'SPORTS': '#FFCE56',
+     'MEETING': '#B5739D',
+     'HOLIDAY': '#0F996B',
+     'APPOINTMENT': '#4BC0C0',
+     'REMINDER': '#009999',
+     'SHOPPING': '#ee5985',
      'OTHER': '#607D8B'
   };
+
   categories = ['WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION', 'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS', 'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'];
 
   currentDate: moment.Moment = moment();

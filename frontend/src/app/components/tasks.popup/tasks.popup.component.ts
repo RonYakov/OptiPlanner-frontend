@@ -17,40 +17,40 @@ export class TasksPopupComponent implements OnInit, OnChanges {
   times: { time: string, displayTime: string, isAfternoon: boolean }[] = [];
   closestTime: string = "";
   googleCalendarColors:Record<string, string> = {
-    'WORK': '#2962FF',
-    'PERSONAL': '#43A047',
-    'FAMILY': '#FB8C00',
-    'HEALTH': '#D50000',
-    'EDUCATION': '#8E24AA',
-    'FINANCE': '#FDD835',
-    'SOCIAL': '#00BFA5',
-    'TRAVEL': '#039BE5',
-    'ENTERTAINMENT': '#E64A19',
-    'SPORTS': '#AEEA00',
-    'MEETING': '#304FFE',
-    'HOLIDAY': '#64DD17',
-    'APPOINTMENT': '#FFAB00',
-    'REMINDER': '#795548',
-    'SHOPPING': '#9E9E9E',
+    'WORK': '#7395c5',
+    'PERSONAL': '#36A2EB',
+    'FAMILY': '#A680B8',
+    'HEALTH': '#FF9F40',
+    'EDUCATION': '#97D077',
+    'FINANCE': '#966738',
+    'SOCIAL': '#EA6B66',
+    'TRAVEL': '#E64735',
+    'ENTERTAINMENT': '#E3AD42',
+    'SPORTS': '#FFCE56',
+    'MEETING': '#B5739D',
+    'HOLIDAY': '#0F996B',
+    'APPOINTMENT': '#4BC0C0',
+    'REMINDER': '#009999',
+    'SHOPPING': '#ee5985',
     'OTHER': '#607D8B'
   };
   googleCalendarDarkerColors: Record<string, string> = {
-    'WORK': '#1D47B2',
-    'PERSONAL': '#2E7A35',
-    'FAMILY': '#C06B00',
-    'HEALTH': '#9C0000',
-    'EDUCATION': '#661D79',
-    'FINANCE': '#BDA600',
-    'SOCIAL': '#008373',
-    'TRAVEL': '#0273A2',
-    'ENTERTAINMENT': '#A83614',
-    'SPORTS': '#7EAD00',
-    'MEETING': '#2335B3',
-    'HOLIDAY': '#469B12',
-    'APPOINTMENT': '#C38300',
-    'REMINDER': '#5A3E37',
-    'SHOPPING': '#6B6B6B',
-    'OTHER': '#455A64'
+    'WORK': '#56749b',          // Darker shade of #7395c5
+    'PERSONAL': '#2b82c0',      // Darker shade of #36A2EB
+    'FAMILY': '#835f9a',        // Darker shade of #A680B8
+    'HEALTH': '#cc7f33',        // Darker shade of #FF9F40
+    'EDUCATION': '#79a35f',     // Darker shade of #97D077
+    'FINANCE': '#755029',       // Darker shade of #966738
+    'SOCIAL': '#bb544f',        // Darker shade of #EA6B66
+    'TRAVEL': '#b1382b',        // Darker shade of #E64735
+    'ENTERTAINMENT': '#b08934', // Darker shade of #E3AD42
+    'SPORTS': '#cc9f45',        // Darker shade of #FFCE56
+    'MEETING': '#8e577d',       // Darker shade of #B5739D
+    'HOLIDAY': '#0c7b55',       // Darker shade of #0F996B
+    'APPOINTMENT': '#3a9898',   // Darker shade of #4BC0C0
+    'REMINDER': '#007a7a',      // Darker shade of #009999
+    'SHOPPING': '#bc476a',      // Darker shade of #ee5985
+    'OTHER': '#4b616c'
   };
   categories = ['WORK', 'PERSONAL', 'FAMILY', 'HEALTH', 'EDUCATION', 'FINANCE', 'SOCIAL', 'TRAVEL', 'ENTERTAINMENT', 'SPORTS', 'MEETING', 'HOLIDAY', 'APPOINTMENT', 'REMINDER', 'SHOPPING', 'OTHER'];
 

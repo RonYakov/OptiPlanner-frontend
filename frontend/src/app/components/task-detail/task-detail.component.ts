@@ -15,6 +15,7 @@ export class TaskDetailComponent implements OnInit {
   @Input() task!: Task;
   @Output() close = new EventEmitter<void>();
 
+  originalEvent: any;
   showResolver = false;
   conflictingEvents: any[] = [];
   newEvent: any = null;
@@ -40,6 +41,7 @@ export class TaskDetailComponent implements OnInit {
 
   onEdit() {
     this.newEvent = this.task.name;
+    this.originalEvent = Object.assign({}, this.task);
     const modalRef = this.modalService.open(CreateEventComponent, { size: 'lg' });
     modalRef.componentInstance.task = this.task;
 
@@ -82,7 +84,11 @@ export class TaskDetailComponent implements OnInit {
 
   onCancelEditing() {
     this.showResolver = false;
-    window.location.reload();
+    this.loadingService.setLoading(true);
+    this.createEventService.createEvent(this.originalEvent).subscribe((data) => {
+      this.loadingService.setLoading(false);
+      window.location.reload();
+    });
   }
 
   private retryEventCreation() {
