@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter, ChangeDetectorRef} from '@angular/core';
 import { Task } from '../../shared/classes/task';
 import { CalendarService } from '../../shared/services/calendar.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { CreateEventComponent } from '../create-event/create-event.component';
 import { CreateEventService } from '../../shared/services/create-event.service';
 import { LoadingService } from '../../shared/services/loading.service';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-task-detail',
@@ -23,7 +24,9 @@ export class TaskDetailComponent implements OnInit {
   constructor(private calendarService: CalendarService,
               private modalService: NgbModal,
               private  createEventService: CreateEventService,
-              private loadingService: LoadingService) { }
+              private loadingService: LoadingService,
+              private router: Router,
+     ) { }
 
   ngOnInit(): void { }
 
@@ -49,10 +52,12 @@ export class TaskDetailComponent implements OnInit {
       this.task = Object.assign(this.task, event);
       this.loadingService.setLoading(true);
       let res = this.createEventService.editEvent(this.task);
-      res.subscribe((data) => {
+      res.subscribe(async (data) => {
         this.loadingService.setLoading(false);
         if(data.status === 200){
-          window.location.reload();
+          //window.location.reload();
+          //this.modalService.dismissAll();
+          await this.router.navigate(['/calendar']);
         } else {
           this.ifEventCreationFailed(data);
         }
@@ -60,11 +65,13 @@ export class TaskDetailComponent implements OnInit {
     }).catch((error) => {
     });
   }
-  onDelete() {
+  async onDelete() {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      this.calendarService.deleteEvent(this.task.id).subscribe(res => {
+      this.calendarService.deleteEvent(this.task.id).subscribe(async res => {
         if (res.status === 200) {
-          window.location.reload();
+          //window.location.reload();
+          //this.activeModal.close();
+          await this.router.navigate(['/calendar']);
         } else {
           console.error(res.data);
         }
@@ -85,9 +92,10 @@ export class TaskDetailComponent implements OnInit {
   onCancelEditing() {
     this.showResolver = false;
     this.loadingService.setLoading(true);
-    this.createEventService.createEvent(this.originalEvent).subscribe((data) => {
+    this.createEventService.createEvent(this.originalEvent).subscribe(async (data) => {
       this.loadingService.setLoading(false);
-      window.location.reload();
+      //window.location.reload();
+      await this.router.navigate(['/calendar']);
     });
   }
 
@@ -95,11 +103,12 @@ export class TaskDetailComponent implements OnInit {
     this.loadingService.setLoading(true);
 
     let res = this.createEventService.editChangeEvents(this.task, this.conflictingEvents);
-    res.subscribe((data) => {
+    res.subscribe(async (data) => {
       this.loadingService.setLoading(false);
 
       if(data.status === 200) {
-        window.location.reload();
+        //window.location.reload();
+        await this.router.navigate(['/calendar']);
       } else{
         this.ifEventCreationFailed(data);
       }

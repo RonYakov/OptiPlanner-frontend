@@ -53,24 +53,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   };
 
-  navigateToCalendar() {
-    this.router.navigate(['/my-calendar']);
+  async navigateToCalendar() {
+   await this.router.navigate(['/my-calendar']);
   }
 
-  navigateToNewEvent() {
-    this.router.navigate(['/create-event']);
+  async navigateToNewEvent() {
+    await this.router.navigate(['/create-event']);
   }
 
-  navigateToStatistics() {
-    this.router.navigate(['/statistics']);
+  async navigateToStatistics() {
+   await this.router.navigate(['/statistics']);
   }
 
-  signOut(): void {
-    this.authService.signout().subscribe(res => {
+  async signOut() {
+    this.authService.signout().subscribe(async res => {
       if (res.status === 200) {
         this.sidebarService.setUserName('User');
         this.sidebarService.toggleIsOpen();
-        this.router.navigate(['/auth/login']);
+        await this.router.navigate(['/auth/login']);
       }
     });
   }
